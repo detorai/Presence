@@ -5,6 +5,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.presenceapp.domain.command.GroupCommand
 import org.example.presenceapp.domain.entities.Either
 import org.example.presenceapp.domain.command.LoginCommand
 import org.example.presenceapp.domain.entities.UserInfo
@@ -77,8 +78,9 @@ class LoginViewModel(
         }
     }
     fun getSchedule(groupId: Int){
+        val groupCommand = GroupCommand(groupId)
         screenModelScope.launch {
-            val result = scheduleUseCase.getSchedule(groupId)
+            val result = scheduleUseCase.getSchedule(groupCommand)
             result.collect{response ->
                 when (response) {
                     is Either.Right -> {
