@@ -7,10 +7,12 @@ import org.example.presenceapp.data.common.dto.auth.ResponsibleDto
 import org.example.presenceapp.data.common.dto.auth.ResponsibleTypeDto
 import org.example.presenceapp.data.common.dto.auth.RoleResponseDto
 import org.example.presenceapp.data.common.dto.auth.UserResponseDto
+import org.example.presenceapp.data.common.dto.schedule.ScheduleRequestDto
 import org.example.presenceapp.data.common.dto.schedule.ScheduleResponseDto
 import org.example.presenceapp.data.common.dto.schedule.SubjectResponseDto
+import org.example.presenceapp.domain.command.GroupCommand
 import org.example.presenceapp.domain.entities.GroupResponse
-import org.example.presenceapp.domain.entities.LoginRequest
+import org.example.presenceapp.domain.command.LoginCommand
 import org.example.presenceapp.domain.entities.LoginResponse
 import org.example.presenceapp.domain.entities.Responsible
 import org.example.presenceapp.domain.entities.ResponsibleType
@@ -32,7 +34,7 @@ fun SubjectResponseDto.toEntity(): Subject = Subject(
     name = name
 )
 
-fun LoginRequest.toDto(): AuthRequestDto = AuthRequestDto(
+fun LoginCommand.toDto(): AuthRequestDto = AuthRequestDto(
     login = email,
     password = password
 )
@@ -70,5 +72,7 @@ fun RoleResponseDto.toEntity(): RoleResponse = RoleResponse(
     id = id,
     name = name
 )
+
+fun GroupCommand.toDto(): ScheduleRequestDto = ScheduleRequestDto(groupId)
 
 

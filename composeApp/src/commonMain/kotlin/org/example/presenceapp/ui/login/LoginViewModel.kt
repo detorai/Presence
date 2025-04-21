@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.presenceapp.domain.entities.Either
-import org.example.presenceapp.domain.entities.LoginRequest
+import org.example.presenceapp.domain.command.LoginCommand
 import org.example.presenceapp.domain.entities.UserInfo
 import org.example.presenceapp.domain.repo.LoginRepository
 import org.example.presenceapp.domain.repo.ScheduleRepository
@@ -52,9 +52,9 @@ class LoginViewModel(
     }
 
     fun login(login: String, password: String) {
-        val loginRequest = LoginRequest(login, password)
+        val loginCommand = LoginCommand(login, password)
         screenModelScope.launch {
-            val result = loginUseCase.login(loginRequest)
+            val result = loginUseCase.login(loginCommand)
             result.collect{response ->
                 when (response) {
                     is Either.Right -> {
