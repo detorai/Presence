@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import org.example.presenceapp.ui.commons.CommonBottomBar
 import org.example.presenceapp.ui.info.components.InfoCard
 import org.example.presenceapp.ui.theme.AppTheme
@@ -24,12 +26,12 @@ import org.example.presenceapp.ui.theme.AppTheme
 class InfoScreen(): Screen {
     @Composable
     override fun Content() {
-        val viewModel = rememberScreenModel { InfoScreenModel() }
+        val viewModel = koinScreenModel<InfoScreenModel>()
         Info(viewModel)
     }
     @Composable
     fun Info(viewModel: InfoScreenModel) {
-
+        val state = viewModel.state.collectAsState().value
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             bottomBar = { CommonBottomBar() }
@@ -43,7 +45,7 @@ class InfoScreen(): Screen {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth()
-                ){
+                ) {
                     Text(
                         "Информация",
                         modifier = Modifier.padding(top = 10.dp),
@@ -54,13 +56,21 @@ class InfoScreen(): Screen {
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(top = 43.dp)
                 ) {
-                    viewModel.user.forEach {
-                        InfoCard(
-                            onClick = {},
-                            text = it.toString()
-                        )
-                        Spacer(Modifier.height(10.dp))
-                    }
+                    InfoCard(
+                        onClick = {},
+                        text = state.userInfo?.userName.toString()
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    InfoCard(
+                        onClick = {},
+                        text = state.userInfo?.userGroup.toString()
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    InfoCard(
+                        onClick = {},
+                        text = state.userInfo?.userRole.toString()
+                    )
+                    Spacer(Modifier.height(10.dp))
                 }
             }
         }

@@ -1,25 +1,46 @@
 package org.example.presenceapp.ui.info
 
 import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import org.example.presenceapp.data.common.dto.auth.UserResponseDto
-import org.example.presenceapp.domain.entities.UserInfo
+import kotlinx.coroutines.launch
+import org.example.presenceapp.domain.entities.Either
+import org.example.presenceapp.domain.repo.LoginRepository
+import org.example.presenceapp.domain.usecases.LoginUseCase
 
-class InfoScreenModel: ScreenModel {
+class InfoScreenModel(
+    loginRepository: LoginRepository
+): ScreenModel {
     val state = MutableStateFlow(InfoScreenState())
 
-    fun getUserInfo(userResponseDto: UserResponseDto?){
-        state.update {
-            it.copy(
-                userInfo = userResponseDto
-            )
-        }
+    private val loginUseCase = LoginUseCase(loginRepository)
+
+    init {
+        setUserInfo()
     }
 
-    val user = listOf(
-        UserInfo.userGroup,
-        UserInfo.userName,
-        UserInfo.userRole
-    )
+    private fun setUserInfo(){
+        screenModelScope.launch {
+            val result = loginUseCase.getUserInfo()
+            result.collect{ response ->
+                when (response) {
+                    is Either.Right -> {
+                        state.update {
+                            it.copy(
+                                userInfo = response.value
+                            )
+                        }
+                    }
+                    is Either.Left -> {
+                        state.update {
+                            it.copy(
+                                error = response.value.message
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

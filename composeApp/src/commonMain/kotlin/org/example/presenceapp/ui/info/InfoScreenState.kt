@@ -1,7 +1,8 @@
 package org.example.presenceapp.ui.info
 
-import org.example.presenceapp.data.common.dto.auth.UserResponseDto
+import org.example.presenceapp.domain.entities.UserInfo
 
 data class InfoScreenState(
-    val userInfo: UserResponseDto? = null
+    val userInfo: UserInfo? = null,
+    var error: String? = null
 )

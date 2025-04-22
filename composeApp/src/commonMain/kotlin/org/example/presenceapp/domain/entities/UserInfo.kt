@@ -1,7 +1,7 @@
 package org.example.presenceapp.domain.entities
 
-object UserInfo {
-    var userName: String = ""
-    var userGroup: String = ""
-    var userRole: String = ""
-}
+data class UserInfo(
+    val userName: String,
+    val userGroup: String,
+    val userRole: String
+)

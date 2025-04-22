@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktorfit)
+    alias(libs.plugins.sqldelight)
 }
 
 compose.resources {
@@ -62,12 +63,16 @@ kotlin {
                 implementation(libs.koin.android)
                 implementation(libs.koin.androidx.compose)
                 implementation(libs.koin.ktor)
+
+                // sql
+                implementation(libs.android.driver)
             }
         }
 
         val commonMain by getting {
             resources.srcDirs("src/commonMain/composeResources")
             dependencies {
+                implementation(libs.runtime)
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -112,6 +117,9 @@ kotlin {
 
             // koin
             implementation(libs.koin.core.native)
+
+            // sql
+            implementation(libs.native.driver)
 
             implementation(libs.kotlinx.coroutines.core.v173nativemt)
             implementation(libs.kermit)
@@ -158,4 +166,12 @@ dependencies {
     add("kspAndroid", libs.ktorfit.ksp)
     add("kspIosX64", libs.ktorfit.ksp)
     add("kspIosArm64", libs.ktorfit.ksp)
+}
+
+sqldelight {
+    databases {
+        create("PresenceDatabase") {
+            packageName.set("org.example.presenceapp.data.local.sql.cache")
+        }
+    }
 }

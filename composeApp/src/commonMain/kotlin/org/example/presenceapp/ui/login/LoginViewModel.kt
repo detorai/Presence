@@ -6,9 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.presenceapp.domain.command.GroupCommand
-import org.example.presenceapp.domain.entities.Either
 import org.example.presenceapp.domain.command.LoginCommand
-import org.example.presenceapp.domain.entities.UserInfo
+import org.example.presenceapp.domain.entities.Either
 import org.example.presenceapp.domain.repo.LoginRepository
 import org.example.presenceapp.domain.repo.ScheduleRepository
 import org.example.presenceapp.domain.usecases.LoginUseCase
@@ -61,9 +60,6 @@ class LoginViewModel(
                     is Either.Right -> {
                         val userResponse = response.value.user
                         val groupId = userResponse.responsible.first().group.id
-                        UserInfo.userGroup = userResponse.responsible.first().group.name
-                        UserInfo.userName = userResponse.fio
-                        UserInfo.userRole = userResponse.role.name
                         getSchedule(groupId)
                     }
                     is Either.Left -> {

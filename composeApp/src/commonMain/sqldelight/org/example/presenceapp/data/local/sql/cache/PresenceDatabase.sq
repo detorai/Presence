@@ -1,0 +1,50 @@
+
+import kotlin.Int;
+
+CREATE TABLE Subject (
+    id INTEGER AS Int PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE Schedule (
+    id INTEGER AS Int PRIMARY KEY,
+    lessonNumber INTEGER AS Int NOT NULL,
+    audience TEXT NOT NULL,
+    dayOfWeek INTEGER AS Int NOT NULL,
+    subjectId INTEGER AS Int NOT NULL,
+    FOREIGN KEY (subjectId) REFERENCES Subject(id)
+);
+
+checkSubjectExists:
+SELECT EXISTS(SELECT 1 FROM Subject WHERE id = ?) AS is_exists;
+
+checkScheduleExists:
+SELECT EXISTS(SELECT 1 FROM Schedule WHERE id = ?) AS is_exists;
+
+insertSubject:
+INSERT INTO Subject(id, name)
+VALUES (?, ?);
+
+getAllSubjects:
+SELECT * FROM Subject;
+
+getSubjectById:
+SELECT * FROM Subject WHERE id = ?;
+
+updateSubject:
+UPDATE Subject SET name = ? WHERE id = ?;
+
+insertSchedule:
+INSERT INTO Schedule(id, lessonNumber, audience, dayOfWeek, subjectId)
+VALUES (?, ?, ?, ?, ?);
+
+getAllSchedules:
+SELECT Schedule.id, lessonNumber, audience, dayOfWeek, Subject.id, Subject.name
+FROM Schedule
+INNER JOIN Subject ON Schedule.subjectId = Subject.id;
+
+
+updateSchedule:
+UPDATE Schedule
+SET lessonNumber = ?, audience = ?, dayOfWeek = ?, subjectId = ?
+WHERE id = ?;
