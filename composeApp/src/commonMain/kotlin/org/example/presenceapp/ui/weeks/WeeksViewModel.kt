@@ -13,18 +13,15 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
-import org.example.presenceapp.domain.entities.Schedule
 import org.example.project.domain.models.MonthWithWeeks
 import org.example.project.domain.models.Week
 
 class WeeksViewModel(
-    private val lessons: List<Schedule>,
 ): ScreenModel {
     val state = MutableStateFlow(WeeksScreenState())
 
     init {
         loadWeeks()
-        getGroup(lessons)
     }
 
     private fun loadWeeks() {
@@ -88,16 +85,5 @@ class WeeksViewModel(
             date = date.minus(1, DateTimeUnit.DAY)
         }
         return date
-    }
-
-    fun getGroup(lesson: List<Schedule>){
-        screenModelScope.launch {
-            state.update {
-                it.copy(
-
-                    lessonsList = lesson
-                )
-            }
-        }
     }
 }

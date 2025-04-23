@@ -61,6 +61,7 @@ class LoginViewModel(
                         val userResponse = response.value.user
                         val groupId = userResponse.responsible.first().group.id
                         getSchedule(groupId)
+                        getPresence(groupId)
                     }
                     is Either.Left -> {
                         state.update {
@@ -93,6 +94,22 @@ class LoginViewModel(
                                 error = response.value.message
                             )
                         }
+                    }
+                }
+            }
+        }
+    }
+    fun getPresence(groupId: Int){
+        val groupCommand = GroupCommand(groupId)
+        screenModelScope.launch {
+            val result = scheduleUseCase.getPresence(groupCommand)
+            result.collect{response ->
+                when (response) {
+                    is Either.Right -> {
+
+                    }
+                    is Either.Left -> {
+
                     }
                 }
             }

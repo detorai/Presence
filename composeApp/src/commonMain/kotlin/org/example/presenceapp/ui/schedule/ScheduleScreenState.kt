@@ -7,6 +7,8 @@ import org.example.presenceapp.domain.entities.Schedule
 import org.example.project.domain.models.Week
 
 data class ScheduleScreenState(
+    var success: Boolean = false,
+    var error: String? = null,
     var currentWeek: Week? = null,
     val selectedDate: LocalDate? = null,
     var schedule: Schedule? = null,

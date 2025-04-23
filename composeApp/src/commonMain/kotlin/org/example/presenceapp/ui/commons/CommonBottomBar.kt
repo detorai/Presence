@@ -33,10 +33,9 @@ import org.jetbrains.compose.resources.painterResource
 fun CommonBottomBar() {
     val navigator = LocalNavigator.currentOrThrow
     val currentScreen = navigator.lastItem
-    val lessons = emptyList<Schedule>()
     val routes = listOf(
         Triple(Res.drawable.info, "Информация", InfoScreen()),
-        Triple(Res.drawable.schedule, "Расписание", WeeksScreen(lessons = lessons)),
+        Triple(Res.drawable.schedule, "Расписание", WeeksScreen()),
         Triple(Res.drawable.settings, "Настройки", SettingsScreen())
     )
 

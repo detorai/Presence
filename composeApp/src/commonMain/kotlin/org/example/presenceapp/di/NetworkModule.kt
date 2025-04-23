@@ -15,7 +15,9 @@ import org.example.presenceapp.data.repository.ScheduleNetRepository
 import org.example.presenceapp.domain.repo.LoginRepository
 import org.example.presenceapp.domain.repo.ScheduleRepository
 import org.example.presenceapp.domain.usecases.LoginUseCase
+import org.example.presenceapp.domain.usecases.ScheduleUseCase
 import org.example.presenceapp.ui.info.InfoScreenModel
+import org.example.presenceapp.ui.schedule.ScheduleScreenModel
 import org.example.project.ui.login.LoginViewModel
 import org.koin.dsl.module
 
@@ -27,12 +29,13 @@ val networkModule = module {
     single { AuthApiImpl(get()) }
     single<LoginRepository> { AuthRepository(get(), get(), get()) }
 
-    single { LoginUseCase(get()) }
-
     single { ScheduleApiImpl(get()) }
-    single<ScheduleRepository> { ScheduleNetRepository (get()) }
+    single<ScheduleRepository> { ScheduleNetRepository (get(), get()) }
 
+    single { LoginUseCase(get()) }
+    single { ScheduleUseCase(get()) }
 
     factory { InfoScreenModel(get()) }
+    factory { ScheduleScreenModel(get()) }
     factory { LoginViewModel(get(), get()) }
 }

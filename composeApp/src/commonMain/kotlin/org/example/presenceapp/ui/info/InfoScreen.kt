@@ -20,6 +20,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import org.example.presenceapp.ui.commons.CommonBottomBar
+import org.example.presenceapp.ui.commons.ErrorDialog
 import org.example.presenceapp.ui.info.components.InfoCard
 import org.example.presenceapp.ui.theme.AppTheme
 
@@ -40,7 +41,12 @@ class InfoScreen(): Screen {
             Column(
                 modifier = Modifier.fillMaxSize().background(AppTheme.colors.white).padding(32.dp)
             ) {
-
+                state.error?.let {
+                    ErrorDialog(
+                        onDismiss = viewModel::resetError,
+                        text = it
+                    )
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,

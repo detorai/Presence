@@ -19,6 +19,13 @@ class InfoScreenModel(
     init {
         setUserInfo()
     }
+    fun resetError(){
+        state.update{
+            it.copy(
+                error = null
+            )
+        }
+    }
 
     private fun setUserInfo(){
         screenModelScope.launch {
@@ -28,7 +35,8 @@ class InfoScreenModel(
                     is Either.Right -> {
                         state.update {
                             it.copy(
-                                userInfo = response.value
+                                userInfo = response.value,
+                                success = true
                             )
                         }
                     }

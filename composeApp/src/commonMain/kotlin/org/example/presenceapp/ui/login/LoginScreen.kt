@@ -37,7 +37,7 @@ class LoginScreen: Screen {
 
         LaunchedEffect(state.success) {
             if (state.success) {
-                navigator.push(WeeksScreen(state.lessonsList))
+                navigator.push(WeeksScreen())
             }
         }
         Login(viewModel)

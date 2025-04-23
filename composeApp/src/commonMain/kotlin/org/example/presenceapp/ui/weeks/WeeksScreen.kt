@@ -31,13 +31,11 @@ import org.example.presenceapp.ui.weeks.components.MonthHeader
 import org.example.presenceapp.ui.weeks.components.ScheduleCard
 import org.example.project.domain.models.formatWeek
 
-data class WeeksScreen(
-    private val lessons: List<Schedule>,
-): Screen {
+class WeeksScreen: Screen {
     @Composable
     override fun Content() {
         val navigator  = LocalNavigator.currentOrThrow
-        val viewModel = rememberScreenModel { WeeksViewModel(lessons) }
+        val viewModel = rememberScreenModel { WeeksViewModel() }
         Scaffold(
             bottomBar = {
                 CommonBottomBar()
@@ -78,7 +76,7 @@ data class WeeksScreen(
                     }
                     items(weeks.sortedByDescending { it.startDate }) { week ->
                         ScheduleCard(text = week.formatWeek(), onClick = {
-                            navigator.push(ScheduleScreen(state.lessonsList, week))
+                            navigator.push(ScheduleScreen(week))
                         })
                         Spacer(Modifier.height(10.dp))
                     }

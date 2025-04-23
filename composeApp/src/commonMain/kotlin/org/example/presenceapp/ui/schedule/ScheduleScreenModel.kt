@@ -7,21 +7,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.presenceapp.domain.entities.Either
 import org.example.presenceapp.domain.entities.Schedule
-import org.example.project.domain.models.Week
+import org.example.presenceapp.domain.repo.ScheduleRepository
+import org.example.presenceapp.domain.usecases.ScheduleUseCase
 
-data class ScheduleScreenModel(
-    private val lessons: List<Schedule>,
-    private val week: Week
-
+class ScheduleScreenModel(
+    scheduleRepository: ScheduleRepository
 ): ScreenModel {
     val state = MutableStateFlow(ScheduleScreenState())
+    private val scheduleUseCase = ScheduleUseCase(scheduleRepository)
 
     private val _currentDayIndex = MutableStateFlow(0)
     val currentDayIndex: StateFlow<Int> = _currentDayIndex.asStateFlow()
 
     init {
-        getGroup(lessons)
+        getAllSchedule()
     }
 
     fun setSwipeState(swiping: Boolean) {
@@ -45,12 +46,34 @@ data class ScheduleScreenModel(
             )
         }
     }
-    fun getGroup(lesson: List<Schedule>){
+    fun resetError(){
+        state.update{
+            it.copy(
+                error = null
+            )
+        }
+    }
+    private fun getAllSchedule(){
         screenModelScope.launch {
-            state.update {
-                it.copy(
-                    lessonsList = lesson
-                )
+            val result = scheduleUseCase.getLocalSchedule()
+            result.collect{res ->
+                when (res) {
+                    is Either.Right -> {
+                        state.update {
+                            it.copy(
+                                lessonsList = res.value,
+                                success = true
+                            )
+                        }
+                    }
+                    is Either.Left -> {
+                        state.update {
+                            it.copy(
+                                error = res.value.message
+                            )
+                        }
+                    }
+                }
             }
         }
     }

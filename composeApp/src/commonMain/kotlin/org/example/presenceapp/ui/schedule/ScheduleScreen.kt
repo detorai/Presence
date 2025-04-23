@@ -14,29 +14,28 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
-import org.example.presenceapp.domain.entities.Schedule
 import org.example.presenceapp.ui.attendance.AttendanceScreen
 import org.example.presenceapp.ui.commons.CommonTopBar
+import org.example.presenceapp.ui.commons.ErrorDialog
+import org.example.presenceapp.ui.commons.types.ScreenType
 import org.example.presenceapp.ui.schedule.components.ScheduleDaySelector
 import org.example.presenceapp.ui.schedule.components.ScheduleLessonList
 import org.example.presenceapp.ui.theme.AppTheme
-import org.example.presenceapp.ui.commons.types.ScreenType
 import org.example.project.domain.models.Week
 import org.example.project.domain.models.formatDay
 
 data class ScheduleScreen(
-    private val lessons: List<Schedule>,
     private val week: Week,
 ): Screen {
     @Composable
     override fun Content() {
-        val screenModel = rememberScreenModel { ScheduleScreenModel(lessons, week) }
+        val screenModel = koinScreenModel<ScheduleScreenModel>()
 
         Schedule(screenModel = screenModel)
 
@@ -88,6 +87,12 @@ data class ScheduleScreen(
                     modifier = Modifier
                         .padding(padding)
                 ) {
+                    state.error?.let {
+                        ErrorDialog(
+                            onDismiss = screenModel::resetError,
+                            text = it
+                        )
+                    }
                     ScheduleDaySelector(
                         currentPage = currentPage,
                         daysOfWeek = daysOfWeek,

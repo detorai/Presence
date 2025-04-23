@@ -16,10 +16,10 @@ CREATE TABLE Schedule (
 );
 
 checkSubjectExists:
-SELECT EXISTS(SELECT 1 FROM Subject WHERE id = ?) AS is_exists;
+SELECT EXISTS(SELECT 1 FROM Subject WHERE id = ?);
 
 checkScheduleExists:
-SELECT EXISTS(SELECT 1 FROM Schedule WHERE id = ?) AS is_exists;
+SELECT EXISTS(SELECT 1 FROM Schedule WHERE id = ?);
 
 insertSubject:
 INSERT INTO Subject(id, name)
@@ -39,7 +39,12 @@ INSERT INTO Schedule(id, lessonNumber, audience, dayOfWeek, subjectId)
 VALUES (?, ?, ?, ?, ?);
 
 getAllSchedules:
-SELECT Schedule.id, lessonNumber, audience, dayOfWeek, Subject.id, Subject.name
+SELECT Schedule.id AS schedule_id,
+           lessonNumber,
+           audience,
+           dayOfWeek,
+           Subject.id AS subject_id,
+           Subject.name AS subject_name
 FROM Schedule
 INNER JOIN Subject ON Schedule.subjectId = Subject.id;
 

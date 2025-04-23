@@ -1,5 +1,6 @@
 package org.example.presenceapp.data.local.sql.cache
 
+import org.example.presenceapp.domain.entities.Schedule
 import org.example.presenceapp.domain.entities.Subject
 
 internal class Database(databaseDriverFactory: DatabaseDriverFactory) {
@@ -12,16 +13,53 @@ internal class Database(databaseDriverFactory: DatabaseDriverFactory) {
 
     internal fun setSubjects( subject: Subject ){
         dbQuery.transaction{
-            val exists = dbQuery.checkSubjectExists(subject.id)
-                .executeAsOne()
-            dbQuery.insertSubject(
-                id = subject.id,
-                name = subject.name
-            )
+            val exists = dbQuery.checkSubjectExists(subject.id).executeAsOne()
+            if (!exists) {
+                dbQuery.insertSubject(
+                    id = subject.id,
+                    name = subject.name
+                )
+            }
         }
     }
 
-    internal fun setSchedule(){}
+    internal fun setSchedule( schedule: Schedule ){
+        dbQuery.transaction {
+            val exists = dbQuery.checkScheduleExists(schedule.id).executeAsOne()
+            if (!exists) {
+                dbQuery.insertSchedule(
+                    id = schedule.id,
+                    lessonNumber = schedule.lessonNumber,
+                    audience = schedule.audience,
+                    dayOfWeek = schedule.dayOfWeek,
+                    subjectId = schedule.subject.id
+                )
+            }
+        }
+    }
+
+    internal fun getAllSchedule(): List<Schedule> {
+        return dbQuery.getAllSchedules(::mapSchedule).executeAsList()
+    }
+
+    private fun mapSchedule(
+        schedule_id: Int,
+        lessonNumber: Int,
+        audience: String,
+        dayOfWeek: Int,
+        subject_id: Int,
+        subject_name: String
+    ): Schedule{
+        return Schedule(
+            id = schedule_id,
+            lessonNumber = lessonNumber,
+            audience = audience,
+            dayOfWeek = dayOfWeek,
+            subject = Subject(
+                subject_id, subject_name
+            )
+        )
+    }
 
 
 
