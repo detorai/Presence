@@ -9,18 +9,18 @@ import org.example.presenceapp.domain.command.GroupCommand
 import org.example.presenceapp.domain.command.LoginCommand
 import org.example.presenceapp.domain.entities.Either
 import org.example.presenceapp.domain.repo.LoginRepository
-import org.example.presenceapp.domain.repo.ScheduleRepository
+import org.example.presenceapp.domain.repo.GroupRepository
 import org.example.presenceapp.domain.usecases.LoginUseCase
 import org.example.presenceapp.domain.usecases.ScheduleUseCase
 
 
 class LoginViewModel(
     loginRepository: LoginRepository,
-    scheduleRepository: ScheduleRepository
+    groupRepository: GroupRepository
 ): ScreenModel {
     val state = MutableStateFlow(LoginScreenState())
     private val loginUseCase = LoginUseCase(loginRepository)
-    private val scheduleUseCase = ScheduleUseCase(scheduleRepository)
+    private val scheduleUseCase = ScheduleUseCase(groupRepository)
 
     fun resetError(){
         state.update{

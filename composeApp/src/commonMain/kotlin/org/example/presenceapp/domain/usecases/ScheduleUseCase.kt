@@ -6,18 +6,17 @@ import org.example.presenceapp.domain.command.GroupCommand
 import org.example.presenceapp.domain.entities.Either
 import org.example.presenceapp.domain.entities.Presence
 import org.example.presenceapp.domain.entities.Schedule
-import org.example.presenceapp.domain.entities.Subject
-import org.example.presenceapp.domain.repo.ScheduleRepository
+import org.example.presenceapp.domain.repo.GroupRepository
 
 class ScheduleUseCase(
-    private val scheduleRepository: ScheduleRepository
+    private val groupRepository: GroupRepository
 ) {
     fun getSchedule(groupCommand: GroupCommand): Flow<Either<Exception, List<Schedule>>> = flow {
         return@flow try {
-            val result = scheduleRepository.getSchedule(groupCommand)
+            val result = groupRepository.getSchedule(groupCommand)
             result.forEach { res ->
-                scheduleRepository.setSubject(res.subject)
-                scheduleRepository.setSchedule(res)
+                groupRepository.setSubject(res.subject)
+                groupRepository.setSchedule(res)
             }
             emit(Either.Right(result))
         } catch (e: Exception) {
@@ -26,7 +25,7 @@ class ScheduleUseCase(
     }
     fun getLocalSchedule(): Flow<Either<Exception, List<Schedule>>> = flow {
         return@flow try {
-            val result = scheduleRepository.getLocalSchedule()
+            val result = groupRepository.getLocalSchedule()
             emit(Either.Right(result))
         } catch (e: Exception) {
             emit(Either.Left(e))
@@ -35,7 +34,7 @@ class ScheduleUseCase(
 
     fun getPresence(groupCommand: GroupCommand): Flow<Either<Exception, List<Presence>>> = flow {
         return@flow try {
-            val result = scheduleRepository.getPresenceByGroup(groupCommand)
+            val result = groupRepository.getPresenceByGroup(groupCommand)
             emit(Either.Right(result))
         } catch (e: Exception) {
             emit(Either.Left(e))

@@ -1,6 +1,6 @@
 package org.example.presenceapp.data.common
 
-import org.example.presenceapp.data.common.dto.attendance.AttendanceResponseDto
+import org.example.presenceapp.data.common.dto.presence.PresettingDto
 import org.example.presenceapp.data.common.dto.auth.AuthRequestDto
 import org.example.presenceapp.data.common.dto.auth.AuthResponseDto
 import org.example.presenceapp.data.common.dto.auth.GroupDto
@@ -8,18 +8,26 @@ import org.example.presenceapp.data.common.dto.auth.ResponsibleDto
 import org.example.presenceapp.data.common.dto.auth.ResponsibleTypeDto
 import org.example.presenceapp.data.common.dto.auth.RoleResponseDto
 import org.example.presenceapp.data.common.dto.auth.UserResponseDto
-import org.example.presenceapp.data.common.dto.schedule.ScheduleRequestDto
-import org.example.presenceapp.data.common.dto.schedule.ScheduleResponseDto
-import org.example.presenceapp.data.common.dto.schedule.SubjectResponseDto
+import org.example.presenceapp.data.common.dto.group.GroupRequestDto
+import org.example.presenceapp.data.common.dto.group.PresenceResponseDto
+import org.example.presenceapp.data.common.dto.group.ScheduleResponseDto
+import org.example.presenceapp.data.common.dto.group.StudentsResponseDto
+import org.example.presenceapp.data.common.dto.group.SubjectResponseDto
+import org.example.presenceapp.data.common.dto.presence.AttendanceTypeDto
+import org.example.presenceapp.data.common.dto.presence.PresenceRequestDto
 import org.example.presenceapp.domain.command.GroupCommand
 import org.example.presenceapp.domain.entities.GroupResponse
 import org.example.presenceapp.domain.command.LoginCommand
+import org.example.presenceapp.domain.command.PresenceCommand
+import org.example.presenceapp.domain.entities.AttendanceTypeNet
 import org.example.presenceapp.domain.entities.LoginResponse
 import org.example.presenceapp.domain.entities.Presence
+import org.example.presenceapp.domain.entities.Presetting
 import org.example.presenceapp.domain.entities.Responsible
 import org.example.presenceapp.domain.entities.ResponsibleType
 import org.example.presenceapp.domain.entities.RoleResponse
 import org.example.presenceapp.domain.entities.Schedule
+import org.example.presenceapp.domain.entities.Students
 import org.example.presenceapp.domain.entities.Subject
 import org.example.presenceapp.domain.entities.UserResponse
 
@@ -75,10 +83,25 @@ fun RoleResponseDto.toEntity(): RoleResponse = RoleResponse(
     name = name
 )
 
-fun GroupCommand.toDto(): ScheduleRequestDto = ScheduleRequestDto(groupId)
+fun GroupCommand.toDto(): GroupRequestDto = GroupRequestDto(groupId)
 
-fun AttendanceResponseDto.toEntity(): Presence = Presence(
+fun PresenceResponseDto.toEntity(): Presence = Presence(
     presenceId, scheduleId, attendanceTypeId, presenceDate, studentId
 )
 
+fun StudentsResponseDto.toEntity(): Students = Students(
+    studentId, uuid, email, number, fio, enrollDate, expulsionDate
+)
+
+fun AttendanceTypeDto.toEntity(): AttendanceTypeNet = AttendanceTypeNet(
+    id, name
+)
+
+fun PresettingDto.toEntity(): Presetting = Presetting(
+    id, attendanceType, studentId, startAt, endAt
+)
+
+fun PresenceCommand.toDto(): PresenceRequestDto = PresenceRequestDto(
+    studentId, scheduleId, attendanceTypeId, presenceDate
+)
 

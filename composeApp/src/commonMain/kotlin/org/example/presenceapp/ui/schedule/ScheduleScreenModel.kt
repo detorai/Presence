@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.presenceapp.domain.entities.Either
 import org.example.presenceapp.domain.entities.Schedule
-import org.example.presenceapp.domain.repo.ScheduleRepository
+import org.example.presenceapp.domain.repo.GroupRepository
 import org.example.presenceapp.domain.usecases.ScheduleUseCase
 
 class ScheduleScreenModel(
-    scheduleRepository: ScheduleRepository
+    groupRepository: GroupRepository
 ): ScreenModel {
     val state = MutableStateFlow(ScheduleScreenState())
-    private val scheduleUseCase = ScheduleUseCase(scheduleRepository)
+    private val scheduleUseCase = ScheduleUseCase(groupRepository)
 
     private val _currentDayIndex = MutableStateFlow(0)
     val currentDayIndex: StateFlow<Int> = _currentDayIndex.asStateFlow()

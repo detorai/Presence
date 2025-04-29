@@ -1,4 +1,4 @@
-package org.example.presenceapp.data.common.dto.schedule
+package org.example.presenceapp.data.common.dto.group
 
 import kotlinx.serialization.Serializable
 

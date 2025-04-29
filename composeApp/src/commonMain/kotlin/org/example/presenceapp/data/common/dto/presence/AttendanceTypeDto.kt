@@ -1,4 +1,4 @@
-package org.example.presenceapp.data.common.dto.attendance
+package org.example.presenceapp.data.common.dto.presence
 
 import kotlinx.serialization.Serializable
 

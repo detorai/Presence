@@ -4,22 +4,23 @@ import org.example.presenceapp.data.common.toDto
 import org.example.presenceapp.data.common.toEntity
 import org.example.presenceapp.data.local.sql.cache.Database
 import org.example.presenceapp.data.local.sql.cache.DatabaseDriverFactory
-import org.example.presenceapp.data.remote.impl.ScheduleApiImpl
+import org.example.presenceapp.data.remote.impl.GroupApiImpl
 import org.example.presenceapp.domain.command.GroupCommand
 import org.example.presenceapp.domain.entities.Presence
 import org.example.presenceapp.domain.entities.Schedule
+import org.example.presenceapp.domain.entities.Students
 import org.example.presenceapp.domain.entities.Subject
-import org.example.presenceapp.domain.repo.ScheduleRepository
+import org.example.presenceapp.domain.repo.GroupRepository
 
-class ScheduleNetRepository(
-    private val scheduleApiImpl: ScheduleApiImpl,
+class GroupNetRepository(
+    private val groupApiImpl: GroupApiImpl,
     databaseDriverFactory: DatabaseDriverFactory,
-): ScheduleRepository {
+): GroupRepository {
 
     private val database = Database(databaseDriverFactory)
 
     override suspend fun getSchedule(groupCommand: GroupCommand): List<Schedule> {
-        val result = scheduleApiImpl.getSchedule(groupCommand.toDto())
+        val result = groupApiImpl.getSchedule(groupCommand.toDto())
         return result.map { it.toEntity() }
     }
 
@@ -28,7 +29,12 @@ class ScheduleNetRepository(
     }
 
     override suspend fun getPresenceByGroup(groupCommand: GroupCommand): List<Presence> {
-        val result = scheduleApiImpl.getPresence(groupCommand.toDto())
+        val result = groupApiImpl.getPresence(groupCommand.toDto())
+        return result.map { it.toEntity() }
+    }
+
+    override suspend fun getStudents(groupCommand: GroupCommand): List<Students> {
+        val result = groupApiImpl.getStudents(groupCommand.toDto())
         return result.map { it.toEntity() }
     }
 
