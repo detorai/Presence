@@ -8,6 +8,6 @@ class AndroidDatabaseDriverFactory(
     private val context: Context
 ): DatabaseDriverFactory {
     override fun createDriver(): SqlDriver {
-        return AndroidSqliteDriver(PresenceDatabase.Schema, context, "schedule.db")
+        return AndroidSqliteDriver(PresenceDatabase.Schema, context, "a.db")
     }
 }

@@ -83,7 +83,6 @@ class LoginViewModel(
                     is Either.Right -> {
                         state.update{
                             it.copy(
-                                lessonsList = response.value,
                                 success = true
                             )
                         }

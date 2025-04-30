@@ -51,8 +51,8 @@ fun ScheduleLessonItem(
                 modifier = Modifier
                     .weight(1f)
             ) {
-                Text(text = lesson.subject.name, color = AppTheme.colors.black, style = AppTheme.typography.name)
-                Text(text = "Кабинет: ${lesson.audience}", color = AppTheme.colors.black, style = AppTheme.typography.data)
+                Text(text = lesson.scheduleInfo.subject.name, color = AppTheme.colors.black, style = AppTheme.typography.name)
+                Text(text = "Кабинет: ${lesson.scheduleInfo.audience}", color = AppTheme.colors.black, style = AppTheme.typography.data)
             }
             Text(
                 text = lessonTimes.getOrNull(index - 1) ?: "",

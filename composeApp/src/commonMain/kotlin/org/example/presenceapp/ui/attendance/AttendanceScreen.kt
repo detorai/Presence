@@ -87,7 +87,7 @@ fun Attendance(screenModel: AttendanceScreenModel,
         Scaffold(
             topBar = { CommonTopBar(
                 screenType = ScreenType.GROUP,
-                text = SelectedLessonHolder.selectedLesson?.subject?.name ?: "",
+                text = SelectedLessonHolder.selectedLesson?.scheduleInfo?.subject?.name ?: "",
                 onChangeSortType = { newSortType ->
                     screenModel.changeSortType(newSortType)
                 }

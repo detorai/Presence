@@ -103,7 +103,7 @@ data class ScheduleScreen(
                         val day = page + 1
                         ScheduleLessonList(
                             lessons = state.lessonsList.filter { it.dayOfWeek == day }
-                                .sortedBy { it.lessonNumber },
+                                .sortedBy { it.scheduleInfo.lessonNumber },
                             onLessonClick = { lesson ->
                                 screenModel.selectLesson(lesson)
                                 navigator.push(AttendanceScreen(lesson))

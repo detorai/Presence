@@ -23,7 +23,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.example.presenceapp.domain.entities.Schedule
 import org.example.presenceapp.ui.commons.CommonBottomBar
 import org.example.presenceapp.ui.schedule.ScheduleScreen
 import org.example.presenceapp.ui.theme.AppTheme

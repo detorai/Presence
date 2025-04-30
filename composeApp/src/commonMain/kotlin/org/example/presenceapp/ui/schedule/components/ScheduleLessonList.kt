@@ -36,7 +36,7 @@ fun ScheduleLessonList(lessons: List<Schedule>,
         } else {
             items(8) { index ->
                 val lessonNumber = index + 1
-                val lesson = lessons.firstOrNull{it.lessonNumber == lessonNumber}
+                val lesson = lessons.firstOrNull{it.scheduleInfo.lessonNumber == lessonNumber}
                 if (lesson !=  null) {
                     ScheduleLessonItem(
                         lesson = lesson,

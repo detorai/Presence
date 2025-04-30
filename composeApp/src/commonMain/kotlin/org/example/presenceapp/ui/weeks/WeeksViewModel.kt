@@ -1,10 +1,8 @@
 package org.example.project.ui.weeks
 
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek

@@ -1,12 +1,14 @@
 package org.example.presenceapp.data.local.sql.cache
 
 import org.example.presenceapp.domain.entities.Schedule
+import org.example.presenceapp.domain.entities.ScheduleInfo
 import org.example.presenceapp.domain.entities.Subject
 
 internal class Database(databaseDriverFactory: DatabaseDriverFactory) {
     private val database = PresenceDatabase(
        ScheduleAdapter = Adapters.scheduleAdapter,
        SubjectAdapter = Adapters.subjectAdapter,
+       ScheduleInfoAdapter = Adapters.scheduleInfoAdapter,
        driver = databaseDriverFactory.createDriver()
     )
     private val dbQuery = database.presenceDatabaseQueries
@@ -22,41 +24,71 @@ internal class Database(databaseDriverFactory: DatabaseDriverFactory) {
             }
         }
     }
-
-    internal fun setSchedule( schedule: Schedule ){
+    internal fun setScheduleInfo( scheduleInfo: ScheduleInfo ){
         dbQuery.transaction {
-            val exists = dbQuery.checkScheduleExists(schedule.id).executeAsOne()
+            val exists = dbQuery.checkScheduleInfoExists(scheduleInfo.id).executeAsOne()
             if (!exists) {
-                dbQuery.insertSchedule(
-                    id = schedule.id,
-                    lessonNumber = schedule.lessonNumber,
-                    audience = schedule.audience,
-                    dayOfWeek = schedule.dayOfWeek,
-                    subjectId = schedule.subject.id
+                dbQuery.insertScheduleInfo(
+                    id = scheduleInfo.id,
+                    lessonNumber = scheduleInfo.lessonNumber,
+                    audience = scheduleInfo.audience,
+                    subjectId = scheduleInfo.subject.id
                 )
             }
         }
     }
 
+    internal fun setSchedule (schedule: Schedule) {
+        dbQuery.transaction {
+            val exists = dbQuery.checkScheduleExists(schedule.dayOfWeek, schedule.scheduleInfo.id).executeAsOne()
+            if (!exists) {
+                dbQuery.insertSchedule(
+                    dayOfWeek = schedule.dayOfWeek,
+                    scheduleRowId = schedule.scheduleInfo.id
+                )
+            }
+        }
+    }
     internal fun getAllSchedule(): List<Schedule> {
         return dbQuery.getAllSchedules(::mapSchedule).executeAsList()
     }
 
+//    internal fun setSchedule( schedule: Schedule ){
+//        dbQuery.transaction {
+//            val exists = dbQuery.checkScheduleExists(schedule.scheduleInfo.id).executeAsOne()
+//            if (!exists) {
+//                dbQuery.insertSchedule(
+//                    id = schedule.scheduleInfo.id,
+//                    lessonNumber = schedule.scheduleInfo.lessonNumber,
+//                    audience = schedule.scheduleInfo.audience,
+//                    dayOfWeek = schedule.dayOfWeek,
+//                    subjectId = schedule.scheduleInfo.subject.id
+//                )
+//            }
+//        }
+//    }e
+//
+//    internal fun getAllSchedule(): List<Schedule> {
+//        return dbQuery.getAllSchedules(::mapSchedule).executeAsList()
+//    }
+//
     private fun mapSchedule(
-        schedule_id: Int,
-        lessonNumber: Int,
-        audience: String,
-        dayOfWeek: Int,
-        subject_id: Int,
-        subject_name: String
+    dayOfWeek: Int,
+    scheduleRowId: Int,
+    lessonNumber: Int,
+    audience: String,
+    subjectId: Int,
+    subjectName: String
     ): Schedule{
         return Schedule(
-            id = schedule_id,
+            dayOfWeek = dayOfWeek,
+            scheduleInfo = ScheduleInfo(
+            subject = Subject(
+                subjectId, subjectName
+            ),
+            id = scheduleRowId,
             lessonNumber = lessonNumber,
             audience = audience,
-            dayOfWeek = dayOfWeek,
-            subject = Subject(
-                subject_id, subject_name
             )
         )
     }

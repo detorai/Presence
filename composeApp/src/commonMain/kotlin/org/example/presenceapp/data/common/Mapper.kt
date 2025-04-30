@@ -27,16 +27,19 @@ import org.example.presenceapp.domain.entities.Responsible
 import org.example.presenceapp.domain.entities.ResponsibleType
 import org.example.presenceapp.domain.entities.RoleResponse
 import org.example.presenceapp.domain.entities.Schedule
+import org.example.presenceapp.domain.entities.ScheduleInfo
 import org.example.presenceapp.domain.entities.Students
 import org.example.presenceapp.domain.entities.Subject
 import org.example.presenceapp.domain.entities.UserResponse
 
 fun ScheduleResponseDto.toEntity(): Schedule = Schedule(
-    subject = subject.toEntity(),
-    audience = audience,
+    scheduleInfo = ScheduleInfo(
+        subject = subject.toEntity(),
+        audience = audience,
+        lessonNumber = lessonNumber,
+        id = id
+    ),
     dayOfWeek = dayOfWeek,
-    lessonNumber = lessonNumber,
-    id = id
 )
 
 fun SubjectResponseDto.toEntity(): Subject = Subject(

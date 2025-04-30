@@ -7,19 +7,24 @@ CREATE TABLE Subject (
 );
 
 CREATE TABLE Schedule (
+    scheduleRowId INTEGER AS Int NOT NULL,
+    dayOfWeek INTEGER AS Int NOT NULL,
+    PRIMARY KEY (dayOfWeek, scheduleRowId),
+    FOREIGN KEY (scheduleRowId) REFERENCES ScheduleInfo(id)
+);
+
+CREATE TABLE ScheduleInfo(
     id INTEGER AS Int PRIMARY KEY,
     lessonNumber INTEGER AS Int NOT NULL,
     audience TEXT NOT NULL,
-    dayOfWeek INTEGER AS Int NOT NULL,
     subjectId INTEGER AS Int NOT NULL,
     FOREIGN KEY (subjectId) REFERENCES Subject(id)
 );
 
+
+
 checkSubjectExists:
 SELECT EXISTS(SELECT 1 FROM Subject WHERE id = ?);
-
-checkScheduleExists:
-SELECT EXISTS(SELECT 1 FROM Schedule WHERE id = ?);
 
 insertSubject:
 INSERT INTO Subject(id, name)
@@ -34,22 +39,63 @@ SELECT * FROM Subject WHERE id = ?;
 updateSubject:
 UPDATE Subject SET name = ? WHERE id = ?;
 
+
+
+checkScheduleInfoExists:
+SELECT EXISTS(SELECT 1 FROM ScheduleInfo WHERE id = ?);
+
+insertScheduleInfo:
+INSERT INTO ScheduleInfo(id, lessonNumber, audience, subjectId)
+VALUES (?, ?, ?, ?);
+
+updateScheduleInfo:
+UPDATE ScheduleInfo
+SET lessonNumber = ?, audience = ?, subjectId = ?
+WHERE id = ?;
+
+deleteScheduleInfo:
+DELETE FROM ScheduleInfo WHERE id = ?;
+
+
+
+checkScheduleExists:
+SELECT EXISTS(
+    SELECT 1
+    FROM Schedule
+    WHERE dayOfWeek = ?
+    AND scheduleRowId = ?
+);
+
 insertSchedule:
-INSERT INTO Schedule(id, lessonNumber, audience, dayOfWeek, subjectId)
-VALUES (?, ?, ?, ?, ?);
+INSERT INTO Schedule(dayOfWeek, scheduleRowId)
+VALUES (?, ?);
 
 getAllSchedules:
-SELECT Schedule.id AS schedule_id,
-           lessonNumber,
-           audience,
-           dayOfWeek,
-           Subject.id AS subject_id,
-           Subject.name AS subject_name
-FROM Schedule
-INNER JOIN Subject ON Schedule.subjectId = Subject.id;
-
+SELECT
+    s.dayOfWeek,
+    si.id AS scheduleRowId,
+    si.lessonNumber,
+    si.audience,
+    sub.id AS subjectId,
+    sub.name AS subjectName
+FROM Schedule s
+JOIN ScheduleInfo si ON s.scheduleRowId = si.id
+JOIN Subject sub ON si.subjectId = sub.id;
 
 updateSchedule:
 UPDATE Schedule
-SET lessonNumber = ?, audience = ?, dayOfWeek = ?, subjectId = ?
-WHERE id = ?;
+SET scheduleRowId = ?
+WHERE dayOfWeek = ?
+AND scheduleRowId = ?;
+
+getSchedulesByDay:
+SELECT
+    si.id AS scheduleRowId,
+    si.lessonNumber,
+    si.audience,
+    sub.id AS subjectId,
+    sub.name AS subjectName
+FROM Schedule s
+JOIN ScheduleInfo si ON s.scheduleRowId = si.id
+JOIN Subject sub ON si.subjectId = sub.id
+WHERE s.dayOfWeek = ?;

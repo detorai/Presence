@@ -11,12 +11,11 @@ import org.example.presenceapp.domain.repo.GroupRepository
 class ScheduleUseCase(
     private val groupRepository: GroupRepository
 ) {
-    fun getSchedule(groupCommand: GroupCommand): Flow<Either<Exception, List<Schedule>>> = flow {
+    fun getSchedule(groupCommand: GroupCommand): Flow<Either<Exception, Map<Int, List<Schedule>>>> = flow {
         return@flow try {
-            val result = groupRepository.getSchedule(groupCommand)
+            val result = groupRepository.getSchedule(groupCommand).groupBy { it.dayOfWeek }
             result.forEach { res ->
-                groupRepository.setSubject(res.subject)
-                groupRepository.setSchedule(res)
+
             }
             emit(Either.Right(result))
         } catch (e: Exception) {
