@@ -38,20 +38,20 @@ internal class Database(databaseDriverFactory: DatabaseDriverFactory) {
         }
     }
 
-    internal fun setSchedule (schedule: Schedule) {
-        dbQuery.transaction {
-            val exists = dbQuery.checkScheduleExists(schedule.dayOfWeek, schedule.scheduleInfo.id).executeAsOne()
-            if (!exists) {
-                dbQuery.insertSchedule(
-                    dayOfWeek = schedule.dayOfWeek,
-                    scheduleRowId = schedule.scheduleInfo.id
-                )
-            }
-        }
-    }
-    internal fun getAllSchedule(): List<Schedule> {
-        return dbQuery.getAllSchedules(::mapSchedule).executeAsList()
-    }
+//    internal fun setSchedule (schedule: Schedule) {
+//        dbQuery.transaction {
+//            val exists = dbQuery.checkScheduleExists(schedule.dayOfWeek, schedule.scheduleInfo.id).executeAsOne()
+//            if (!exists) {
+//                dbQuery.insertSchedule(
+//                    dayOfWeek = schedule.dayOfWeek,
+//                    scheduleRowId = schedule.scheduleInfo.id
+//                )
+//            }
+//        }
+//    }
+//    internal fun getAllSchedule(): List<Schedule> {
+//        return dbQuery.getAllSchedules(::mapSchedule).executeAsList()
+//    }
 
 //    internal fun setSchedule( schedule: Schedule ){
 //        dbQuery.transaction {
@@ -72,26 +72,26 @@ internal class Database(databaseDriverFactory: DatabaseDriverFactory) {
 //        return dbQuery.getAllSchedules(::mapSchedule).executeAsList()
 //    }
 //
-    private fun mapSchedule(
-    dayOfWeek: Int,
-    scheduleRowId: Int,
-    lessonNumber: Int,
-    audience: String,
-    subjectId: Int,
-    subjectName: String
-    ): Schedule{
-        return Schedule(
-            dayOfWeek = dayOfWeek,
-            scheduleInfo = ScheduleInfo(
-            subject = Subject(
-                subjectId, subjectName
-            ),
-            id = scheduleRowId,
-            lessonNumber = lessonNumber,
-            audience = audience,
-            )
-        )
-    }
+//    private fun mapSchedule(
+//    dayOfWeek: Int,
+//    scheduleRowId: Int,
+//    lessonNumber: Int,
+//    audience: String,
+//    subjectId: Int,
+//    subjectName: String
+//    ): Schedule{
+//        return Schedule(
+//            dayOfWeek = dayOfWeek,
+//            scheduleInfo = ScheduleInfo(
+//            subject = Subject(
+//                subjectId, subjectName
+//            ),
+//            id = scheduleRowId,
+//            lessonNumber = lessonNumber,
+//            audience = audience,
+//            )
+//        )
+//    }
 
 
 

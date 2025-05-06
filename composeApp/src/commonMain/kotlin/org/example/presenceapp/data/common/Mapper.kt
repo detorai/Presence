@@ -13,6 +13,7 @@ import org.example.presenceapp.data.common.dto.group.PresenceResponseDto
 import org.example.presenceapp.data.common.dto.group.ScheduleResponseDto
 import org.example.presenceapp.data.common.dto.group.StudentsResponseDto
 import org.example.presenceapp.data.common.dto.group.SubjectResponseDto
+import org.example.presenceapp.data.common.dto.group.SubjectsResponseDto
 import org.example.presenceapp.data.common.dto.presence.AttendanceTypeDto
 import org.example.presenceapp.data.common.dto.presence.PresenceRequestDto
 import org.example.presenceapp.domain.command.GroupCommand
@@ -33,13 +34,14 @@ import org.example.presenceapp.domain.entities.Subject
 import org.example.presenceapp.domain.entities.UserResponse
 
 fun ScheduleResponseDto.toEntity(): Schedule = Schedule(
-    scheduleInfo = ScheduleInfo(
-        subject = subject.toEntity(),
-        audience = audience,
-        lessonNumber = lessonNumber,
-        id = id
-    ),
+    scheduleInfo = subjects.map { it.toEntity() },
     dayOfWeek = dayOfWeek,
+)
+fun SubjectsResponseDto.toEntity(): ScheduleInfo = ScheduleInfo(
+    audience = audience,
+    subject = subject.toEntity(),
+    lessonNumber = lessonNumber,
+    id = id
 )
 
 fun SubjectResponseDto.toEntity(): Subject = Subject(

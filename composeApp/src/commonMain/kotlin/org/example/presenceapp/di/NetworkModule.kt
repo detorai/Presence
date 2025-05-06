@@ -16,8 +16,8 @@ import org.example.presenceapp.domain.repo.GroupRepository
 import org.example.presenceapp.domain.repo.PresenceRepository
 import org.example.presenceapp.domain.usecases.LoginUseCase
 import org.example.presenceapp.domain.usecases.ScheduleUseCase
-import org.example.presenceapp.ui.info.InfoScreenModel
-import org.example.presenceapp.ui.schedule.ScheduleScreenModel
+import org.example.presenceapp.ui.feature.info.InfoScreenModel
+import org.example.presenceapp.ui.feature.schedule.ScheduleScreenModel
 import org.example.project.ui.login.LoginViewModel
 import org.koin.dsl.module
 

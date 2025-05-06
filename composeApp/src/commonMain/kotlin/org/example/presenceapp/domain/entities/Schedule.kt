@@ -2,7 +2,7 @@ package org.example.presenceapp.domain.entities
 
 data class Schedule(
     val dayOfWeek: Int,
-    val scheduleInfo: ScheduleInfo
+    val scheduleInfo: List<ScheduleInfo>
 )
 data class ScheduleInfo(
     val id: Int,

@@ -8,7 +8,7 @@ import org.example.presenceapp.domain.entities.Subject
 
 interface GroupRepository {
     suspend fun getSchedule(groupCommand: GroupCommand): List<Schedule>
-    suspend fun getLocalSchedule(): List<Schedule>
+//    suspend fun getLocalSchedule(): List<Schedule>
 
     suspend fun getPresenceByGroup(groupCommand: GroupCommand): List<Presence>
 

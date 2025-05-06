@@ -103,9 +103,6 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose)
 
-                // logging
-                implementation(libs.kotlin.logging)
-
                 // settings
                 implementation(libs.multiplatform.settings)
             }
@@ -160,6 +157,7 @@ dependencies {
     implementation(libs.androidx.ui.text.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.compose.material3)
     debugImplementation(compose.uiTooling)
 
     add("kspCommonMainMetadata", libs.ktorfit.ksp)

@@ -2,6 +2,7 @@ package org.example.presenceapp.ui.settings
 
 import androidx.compose.runtime.Composable
 import org.example.presenceapp.PlatformContext
+import org.example.presenceapp.ui.feature.settings.SettingsManager
 import platform.Foundation.NSUserDefaults
 
 actual class SettingsManager actual constructor(platformContext: PlatformContext) {
