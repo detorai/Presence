@@ -1,7 +1,8 @@
-package org.example.presenceapp.ui.feature.schedule.components
+package org.example.presenceapp.ui.feature.schedule.composables
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,11 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.example.presenceapp.domain.common.SampleData.lessonTimes
+import org.example.presenceapp.domain.entities.ScheduleInfo
 import org.example.presenceapp.ui.theme.AppTheme
 
 @Composable
-fun EmptyScheduleLessonsItem(
-    lessonNumber: Int
+fun ScheduleLessonItem(
+    lesson: ScheduleInfo,
+    index: Int,
+    onLessonClick: (ScheduleInfo) -> Unit
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -28,14 +32,15 @@ fun EmptyScheduleLessonsItem(
         modifier = Modifier
             .fillMaxWidth()
             .background(AppTheme.colors.white)
+            .clickable { onLessonClick(lesson) }
     ) {
         Row(
             modifier = Modifier
                 .padding(16.dp)
         ) {
             Text(
-                text = "$lessonNumber",
-                color = AppTheme.colors.black.copy(alpha = 0.5f),
+                text = "$index",
+                color = AppTheme.colors.black,
                 style = AppTheme.typography.name,
                 modifier = Modifier
                     .padding(start = 5.dp, end = 21.dp)
@@ -43,24 +48,18 @@ fun EmptyScheduleLessonsItem(
             )
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
             ) {
-                Text(
-                    text = "-",
-                    color = AppTheme.colors.black.copy(alpha = 0.5f),
-                    style = AppTheme.typography.name
-                )
-                Text(
-                    text = "Кабинет: —",
-                    color = AppTheme.colors.black.copy(alpha = 0.5f),
-                    style = AppTheme.typography.data
-                )
+                Text(text = lesson.subject.name, color = AppTheme.colors.black, style = AppTheme.typography.name)
+                Text(text = "Кабинет: ${lesson.audience}", color = AppTheme.colors.black, style = AppTheme.typography.data)
             }
             Text(
-                text = lessonTimes.getOrNull(lessonNumber - 1) ?: "",
+                text = lessonTimes.getOrNull(index - 1) ?: "",
                 style = AppTheme.typography.data,
-                color = AppTheme.colors.black.copy(alpha = 0.5f),
-                modifier = Modifier.align(Alignment.CenterVertically)
+                color = AppTheme.colors.black,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
             )
         }
     }

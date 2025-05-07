@@ -1,15 +1,10 @@
 package org.example.project.ui.login
 
-import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.presenceapp.domain.command.GroupCommand
 import org.example.presenceapp.domain.command.LoginCommand
 import org.example.presenceapp.domain.entities.Either
-import org.example.presenceapp.domain.repo.LoginRepository
-import org.example.presenceapp.domain.repo.GroupRepository
 import org.example.presenceapp.domain.usecases.LoginUseCase
 import org.example.presenceapp.domain.usecases.ScheduleUseCase
 import org.example.presenceapp.ui.base.BaseViewModel

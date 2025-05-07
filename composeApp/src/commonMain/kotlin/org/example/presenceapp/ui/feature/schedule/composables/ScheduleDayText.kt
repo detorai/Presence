@@ -1,4 +1,4 @@
-package org.example.presenceapp.ui.feature.schedule.components
+package org.example.presenceapp.ui.feature.schedule.composables
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState

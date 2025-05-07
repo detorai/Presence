@@ -1,31 +1,30 @@
 package org.example.presenceapp.ui.feature.schedule
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
-import org.example.presenceapp.ui.feature.attendance.AttendanceScreen
+import org.example.presenceapp.ui.base.SIDE_EFFECTS_KEY
 import org.example.presenceapp.ui.feature.commons.CommonTopBar
-import org.example.presenceapp.ui.feature.commons.ErrorDialog
 import org.example.presenceapp.ui.feature.commons.types.ScreenType
-import org.example.presenceapp.ui.feature.schedule.components.ScheduleDaySelector
-import org.example.presenceapp.ui.feature.schedule.components.ScheduleLessonList
+import org.example.presenceapp.ui.feature.schedule.composables.ScheduleDaySelector
+import org.example.presenceapp.ui.feature.schedule.composables.ScheduleLessonList
 import org.example.presenceapp.ui.theme.AppTheme
 import org.example.project.domain.models.Week
 import org.example.project.domain.models.formatDay
@@ -35,80 +34,88 @@ data class ScheduleScreen(
 ): Screen {
     @Composable
     override fun Content() {
-        val screenModel = koinScreenModel<ScheduleScreenModel>()
-
-        Schedule(screenModel = screenModel)
-
-    }
-
-    @Composable
-    fun Schedule(screenModel: ScheduleScreenModel) {
-        val navigator = LocalNavigator.currentOrThrow
-        val state = screenModel.state.collectAsState().value
+        val viewModel = koinScreenModel<ScheduleScreenModel>()
+        val state = viewModel.viewState.collectAsState().value
+        val effect = viewModel.effect
         val daysOfWeek = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб")
-        val currentDayIndex by screenModel.currentDayIndex.collectAsState()
         val pagerState = rememberPagerState(
-            initialPage = currentDayIndex,
+            initialPage = state.currentDayIndex,
             pageCount = { daysOfWeek.size }
         )
         val currentPage = pagerState.currentPage + pagerState.currentPageOffsetFraction
         val currentDay = week.startDate.plus(currentPage.toInt(), DateTimeUnit.DAY)
+        val snackbarHostState = remember { SnackbarHostState() }
 
 
-        LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.isScrollInProgress }
-                .collect { isScrolling ->
-                    screenModel.setSwipeState(isScrolling)
-                    if (!isScrolling) {
-                        screenModel.selectDay(pagerState.currentPage)
+        Schedule(  viewModel, state, daysOfWeek, pagerState, currentPage, currentDay, snackbarHostState, effect )
+
+    }
+
+    @Composable
+    fun Schedule(
+        screenModel: ScheduleScreenModel,
+        state: ScheduleContract.State,
+        daysOfWeek: List<String>,
+        pagerState: PagerState,
+        currentPage: Float,
+        currentDay: LocalDate,
+        snackbarHostState: SnackbarHostState,
+        effectFlow: Flow<ScheduleContract.Effect>
+    ) {
+        LaunchedEffect(SIDE_EFFECTS_KEY) {
+            effectFlow.collect { effect ->
+                when (effect) {
+                    is ScheduleContract.Effect.ShowError -> {
+                        snackbarHostState.showSnackbar(
+                            message = effect.message!!,
+                            duration = SnackbarDuration.Short
+                        )
                     }
+                    is ScheduleContract.Effect.Navigation.ToBack -> TODO()
+                    is ScheduleContract.Effect.Navigation.ToPresence -> TODO()
                 }
-        }
-        LaunchedEffect(currentDayIndex) {
-            if (!pagerState.isScrollInProgress) {
-                pagerState.animateScrollToPage(currentDayIndex)
             }
         }
+        LaunchedEffect(pagerState) {
+            screenModel.handlePagerState(pagerState)
+        }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(AppTheme.colors.white)
-        ) {
-            Scaffold(
-                topBar = {
-                    CommonTopBar(
-                        screenType = ScreenType.SCHEDULE,
-                        text = currentDay.formatDay()
+        LaunchedEffect(state.currentDayIndex) {
+            if (!pagerState.isScrollInProgress) {
+                pagerState.animateScrollToPage(state.currentDayIndex)
+            }
+        }
+        Scaffold(
+            topBar = {
+                CommonTopBar(
+                    screenType = ScreenType.SCHEDULE,
+                    text = currentDay.formatDay()
+                )
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    snackbarHostState
+                )
+            }
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+            ) {
+                ScheduleDaySelector(
+                    currentPage = currentPage,
+                    daysOfWeek = daysOfWeek,
+                    onDaySelected = { screenModel.selectDay(it) },
+                    indicatorColor = AppTheme.colors.black
+                )
+                HorizontalPager(state = pagerState) { page ->
+                    val day = page + 1
+                    ScheduleLessonList(
+                        lessons = state.lessonsList.filter { it.dayOfWeek == day },
+                        onLessonClick = { lesson ->
+                            screenModel.selectLesson(lesson)
+                        }
                     )
-                },
-            ) { padding ->
-                Column(
-                    modifier = Modifier
-                        .padding(padding)
-                ) {
-                    state.error?.let {
-                        ErrorDialog(
-                            onDismiss = screenModel::resetError,
-                            text = it
-                        )
-                    }
-                    ScheduleDaySelector(
-                        currentPage = currentPage,
-                        daysOfWeek = daysOfWeek,
-                        onDaySelected = { screenModel.selectDay(it) },
-                        indicatorColor = AppTheme.colors.black
-                    )
-                    HorizontalPager(state = pagerState) { page ->
-                        val day = page + 1
-                        ScheduleLessonList(
-                            lessons = state.lessonsList.filter { it.dayOfWeek == day },
-                            onLessonClick = { lesson ->
-                                screenModel.selectLesson(lesson)
-                                navigator.push(AttendanceScreen(lesson))
-                            }
-                        )
-                    }
                 }
             }
         }

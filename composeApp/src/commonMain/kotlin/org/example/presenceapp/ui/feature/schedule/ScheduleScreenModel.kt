@@ -1,5 +1,7 @@
 package org.example.presenceapp.ui.feature.schedule
 
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.runtime.snapshotFlow
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,70 +13,88 @@ import org.example.presenceapp.domain.entities.Either
 import org.example.presenceapp.domain.entities.Schedule
 import org.example.presenceapp.domain.repo.GroupRepository
 import org.example.presenceapp.domain.usecases.ScheduleUseCase
+import org.example.presenceapp.ui.base.BaseViewModel
 
 class ScheduleScreenModel(
-    groupRepository: GroupRepository
-): ScreenModel {
-    val state = MutableStateFlow(ScheduleScreenState())
-    private val scheduleUseCase = ScheduleUseCase(groupRepository)
-
-    private val _currentDayIndex = MutableStateFlow(0)
-    val currentDayIndex: StateFlow<Int> = _currentDayIndex.asStateFlow()
+    private val scheduleUseCase: ScheduleUseCase
+):  BaseViewModel<ScheduleContract.Event, ScheduleContract.State, ScheduleContract.Effect>() {
 
     init {
-//        getAllSchedule()
+        getAllSchedule()
     }
 
-    fun setSwipeState(swiping: Boolean) {
-        state.update {
-            it.copy(
-                isUserSwiping = swiping
-            )
+    override fun setInitialState() = ScheduleContract.State()
+
+    fun handlePagerState(pagerState: PagerState) {
+        screenModelScope.launch {
+            snapshotFlow { pagerState.isScrollInProgress }
+                .collect { isScrolling ->
+                    setEvent(ScheduleContract.Event.UpdateScrollState(isScrolling))
+
+                    if (!isScrolling) {
+                        setEvent(ScheduleContract.Event.UpdateSelectedDay(
+                            index = pagerState.currentPage,
+                            isManual = false
+                        ))
+                    }
+                }
+        }
+
+        screenModelScope.launch {
+            viewState.collect{ currentState ->
+                if (!pagerState.isScrollInProgress) {
+                    pagerState.animateScrollToPage(currentState.currentDayIndex)
+                }
+            }
         }
     }
 
-    fun selectDay(index: Int) {
-        if (!state.value.isUserSwiping) {
-            _currentDayIndex.value = index
-        }
-    }
 
-    fun selectLesson(lesson: Schedule) {
-        state.update {
-            it.copy(
-                schedule = lesson
-            )
+    override fun handleEvents(event: ScheduleContract.Event) {
+        val state = viewState.value
+        when (event) {
+            is ScheduleContract.Event.UpdateScrollState -> {
+                setState { copy(isUserSwiping = event.isScrolling) }
+            }
+            is ScheduleContract.Event.UpdateSelectedDay -> {
+                if (!state.isUserSwiping || event.isManual) {
+                    setState { copy(currentDayIndex = event.index) }
+                }
+            }
+            is ScheduleContract.Event.SelectDay -> {
+                if (!state.isUserSwiping) {
+                    setState { copy(currentDayIndex = event.index) }
+                }
+            }
+            is ScheduleContract.Event.SelectLesson -> {
+                setState { copy(schedule = event.lesson) }
+            }
+            is ScheduleContract.Event.SetSwipeState -> {
+                setState { copy(isUserSwiping = event.swiping) }
+            }
+            ScheduleContract.Event.SubmitSchedule -> {
+
+            }
         }
     }
-    fun resetError(){
-        state.update{
-            it.copy(
-                error = null
-            )
+    private fun getAllSchedule(){
+        screenModelScope.launch {
+            val result = scheduleUseCase.getLocalSchedule()
+            result.collect {res ->
+                when (res) {
+                    is Either.Right -> {
+                        setState {
+                            copy (
+                                success = true,
+                                lessons = res.value
+                            )
+                        }
+                    }
+                    is Either.Left -> {
+                        setState { copy(error = res.value.message) }
+                    }
+                }
+            }
         }
     }
-//    private fun getAllSchedule(){
-//        screenModelScope.launch {
-//            val result = scheduleUseCase.getLocalSchedule()
-//            result.collect{res ->
-//                when (res) {
-//                    is Either.Right -> {
-//                        state.update {
-//                            it.copy(
-//                                lessonsList = res.value,
-//                                success = true
-//                            )
-//                        }
-//                    }
-//                    is Either.Left -> {
-//                        state.update {
-//                            it.copy(
-//                                error = res.value.message
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 }

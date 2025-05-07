@@ -1,4 +1,4 @@
-package org.example.presenceapp.ui.feature.schedule.components
+package org.example.presenceapp.ui.feature.schedule.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
