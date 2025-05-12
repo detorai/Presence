@@ -24,9 +24,10 @@ class GroupNetRepository(
         return result.map { it.toEntity() }
     }
 
-//    override suspend fun getLocalSchedule(): List<Schedule> {
-//        return database.getAllSchedule()
-//    }
+    override suspend fun getLocalSchedule(): List<Schedule> {
+        return database.getAllSchedules()
+    }
+
 
     override suspend fun getPresenceByGroup(groupCommand: GroupCommand): List<Presence> {
         val result = groupApiImpl.getPresence(groupCommand.toDto())
@@ -38,11 +39,13 @@ class GroupNetRepository(
         return result.map { it.toEntity() }
     }
 
-    override suspend fun setSubject(subject: Subject) {
-        database.setSubjects(subject)
+    override suspend fun saveSchedule(schedule: List<Schedule>) {
+        schedule.forEach { daySchedule ->
+            database.setSchedule(daySchedule)
+        }
     }
 
-    override suspend fun setSchedule(schedule: Schedule) {
-//        database.setSchedule(schedule)
+    override suspend fun saveSubject(subject: Subject) {
+        database.setSubject(subject)
     }
 }

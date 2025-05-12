@@ -12,11 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.example.presenceapp.domain.entities.Schedule
+import org.example.presenceapp.domain.entities.ScheduleInfo
 import org.example.presenceapp.ui.theme.AppTheme
 
 @Composable
-fun ScheduleLessonList(lessons: List<Schedule>,
-                       onLessonClick: (Schedule) -> Unit) {
+fun ScheduleLessonList(lessons: List<ScheduleInfo>,
+                       onLessonClick: (ScheduleInfo) -> Unit) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
@@ -36,7 +37,7 @@ fun ScheduleLessonList(lessons: List<Schedule>,
         } else {
             items(8) { index ->
                 val lessonNumber = index + 1
-                val lesson = lessons.firstOrNull{it.scheduleInfo.lessonNumber == lessonNumber}
+                val lesson = lessons.firstOrNull{it.lessonNumber == lessonNumber}
                 if (lesson !=  null) {
                     ScheduleLessonItem(
                         lesson = lesson,

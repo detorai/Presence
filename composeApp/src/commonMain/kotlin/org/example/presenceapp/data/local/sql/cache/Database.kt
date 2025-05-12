@@ -13,10 +13,14 @@ internal class Database(databaseDriverFactory: DatabaseDriverFactory) {
     )
     private val dbQuery = database.presenceDatabaseQueries
 
-    internal fun setSubjects( subject: Subject ){
-        dbQuery.transaction{
-            val exists = dbQuery.checkSubjectExists(subject.id).executeAsOne()
-            if (!exists) {
+    internal fun setSubject(subject: Subject) {
+        dbQuery.transaction {
+            if (dbQuery.checkSubjectExists(subject.id).executeAsOne()) {
+                dbQuery.updateSubject(
+                    name = subject.name,
+                    id = subject.id
+                )
+            } else {
                 dbQuery.insertSubject(
                     id = subject.id,
                     name = subject.name
@@ -24,10 +28,19 @@ internal class Database(databaseDriverFactory: DatabaseDriverFactory) {
             }
         }
     }
-    internal fun setScheduleInfo( scheduleInfo: ScheduleInfo ){
+
+    internal fun setScheduleInfo(scheduleInfo: ScheduleInfo) {
         dbQuery.transaction {
-            val exists = dbQuery.checkScheduleInfoExists(scheduleInfo.id).executeAsOne()
-            if (!exists) {
+            setSubject(scheduleInfo.subject)
+
+            if (dbQuery.checkScheduleInfoExists(scheduleInfo.id).executeAsOne()) {
+                dbQuery.updateScheduleInfo(
+                    lessonNumber = scheduleInfo.lessonNumber,
+                    audience = scheduleInfo.audience,
+                    subjectId = scheduleInfo.subject.id,
+                    id = scheduleInfo.id
+                )
+            } else {
                 dbQuery.insertScheduleInfo(
                     id = scheduleInfo.id,
                     lessonNumber = scheduleInfo.lessonNumber,
@@ -38,84 +51,72 @@ internal class Database(databaseDriverFactory: DatabaseDriverFactory) {
         }
     }
 
-//    internal fun setSchedule (schedule: Schedule) {
-//        dbQuery.transaction {
-//            val exists = dbQuery.checkScheduleExists(schedule.dayOfWeek, schedule.scheduleInfo.id).executeAsOne()
-//            if (!exists) {
-//                dbQuery.insertSchedule(
-//                    dayOfWeek = schedule.dayOfWeek,
-//                    scheduleRowId = schedule.scheduleInfo.id
-//                )
-//            }
-//        }
-//    }
-//    internal fun getAllSchedule(): List<Schedule> {
-//        return dbQuery.getAllSchedules(::mapSchedule).executeAsList()
-//    }
+    internal fun setSchedule(schedule: Schedule) {
+        dbQuery.transaction {
+            schedule.scheduleInfo.forEach { scheduleInfo ->
+                setScheduleInfo(scheduleInfo)
 
-//    internal fun setSchedule( schedule: Schedule ){
-//        dbQuery.transaction {
-//            val exists = dbQuery.checkScheduleExists(schedule.scheduleInfo.id).executeAsOne()
-//            if (!exists) {
-//                dbQuery.insertSchedule(
-//                    id = schedule.scheduleInfo.id,
-//                    lessonNumber = schedule.scheduleInfo.lessonNumber,
-//                    audience = schedule.scheduleInfo.audience,
-//                    dayOfWeek = schedule.dayOfWeek,
-//                    subjectId = schedule.scheduleInfo.subject.id
-//                )
-//            }
-//        }
-//    }e
-//
-//    internal fun getAllSchedule(): List<Schedule> {
-//        return dbQuery.getAllSchedules(::mapSchedule).executeAsList()
-//    }
-//
-//    private fun mapSchedule(
-//    dayOfWeek: Int,
-//    scheduleRowId: Int,
-//    lessonNumber: Int,
-//    audience: String,
-//    subjectId: Int,
-//    subjectName: String
-//    ): Schedule{
-//        return Schedule(
-//            dayOfWeek = dayOfWeek,
-//            scheduleInfo = ScheduleInfo(
-//            subject = Subject(
-//                subjectId, subjectName
-//            ),
-//            id = scheduleRowId,
-//            lessonNumber = lessonNumber,
-//            audience = audience,
-//            )
-//        )
-//    }
+                if (!dbQuery.checkScheduleExists(
+                        dayOfWeek = schedule.dayOfWeek,
+                        scheduleRowId = scheduleInfo.id
+                    ).executeAsOne()) {
+                    dbQuery.insertSchedule(
+                        dayOfWeek = schedule.dayOfWeek,
+                        scheduleRowId = scheduleInfo.id
+                    )
+                }
+            }
+        }
+    }
 
+    // Получение всего расписания
+    internal fun getAllSchedules(): List<Schedule> {
+        val scheduleMap = mutableMapOf<Int, MutableList<ScheduleInfo>>()
 
+        dbQuery.getAllSchedules().executeAsList().forEach { row ->
+            val scheduleInfo = ScheduleInfo(
+                id = row.scheduleRowId,
+                lessonNumber = row.lessonNumber,
+                audience = row.audience,
+                subject = Subject(
+                    id = row.subjectId,
+                    name = row.subjectName
+                )
+            )
 
-//    internal fun setUserInfo( loginResponse: LoginResponse ) {
-//        dbQuery.transaction {
-//            dbQuery.removeUserInfo()
-//            dbQuery.insertUserInfo(
-//                userName = loginResponse.user.fio,
-//                userGroup = loginResponse.user.responsible.first().group.name,
-//                userRole = loginResponse.user.responsible.first().responsibleType.name
-//            )
-//        }
-//    }
-//    internal fun getUserInfo(): UserInfo {
-//        return dbQuery.selectUserInfo(::mapUserInfo).executeAsOne()
-//    }
-//
-//    private fun mapUserInfo(
-//        userName: String,
-//        userGroup: String,
-//        userRole: String
-//    ): UserInfo {
-//        return UserInfo(
-//            userName, userGroup, userRole
-//        )
-//    }
+            scheduleMap.getOrPut(row.dayOfWeek) { mutableListOf() }.add(scheduleInfo)
+        }
+
+        return scheduleMap.map { (dayOfWeek, scheduleInfo) ->
+            Schedule(
+                dayOfWeek = dayOfWeek,
+                scheduleInfo = scheduleInfo
+            )
+        }
+    }
+
+    internal fun getSchedulesByDay(dayOfWeek: Int): Schedule? {
+        val scheduleInfos = dbQuery.getSchedulesByDay(dayOfWeek)
+            .executeAsList()
+            .map { row ->
+                ScheduleInfo(
+                    id = row.scheduleRowId,
+                    lessonNumber = row.lessonNumber,
+                    audience = row.audience,
+                    subject = Subject(
+                        id = row.subjectId,
+                        name = row.subjectName
+                    )
+                )
+            }
+
+        return if (scheduleInfos.isNotEmpty()) {
+            Schedule(
+                dayOfWeek = dayOfWeek,
+                scheduleInfo = scheduleInfos
+            )
+        } else {
+            null
+        }
+    }
 }

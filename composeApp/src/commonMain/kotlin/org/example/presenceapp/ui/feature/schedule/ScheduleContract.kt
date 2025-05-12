@@ -27,7 +27,7 @@ class ScheduleContract {
         var schedule: ScheduleInfo? = null,
         var isUserSwiping: Boolean = false,
         val currentDayIndex: Int = 0,
-        val lessons: List<ScheduleInfo> = emptyList()
+        val lessons: Map<Int, List<ScheduleInfo>> = emptyMap()
 
     ): ViewState
 

@@ -3,6 +3,7 @@ package org.example.presenceapp.domain.repo
 import org.example.presenceapp.domain.command.GroupCommand
 import org.example.presenceapp.domain.entities.Presence
 import org.example.presenceapp.domain.entities.Schedule
+import org.example.presenceapp.domain.entities.ScheduleInfo
 import org.example.presenceapp.domain.entities.Students
 import org.example.presenceapp.domain.entities.Subject
 

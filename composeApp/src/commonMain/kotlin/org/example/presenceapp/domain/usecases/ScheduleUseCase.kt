@@ -6,24 +6,25 @@ import org.example.presenceapp.domain.command.GroupCommand
 import org.example.presenceapp.domain.entities.Either
 import org.example.presenceapp.domain.entities.Presence
 import org.example.presenceapp.domain.entities.Schedule
+import org.example.presenceapp.domain.entities.ScheduleInfo
 import org.example.presenceapp.domain.repo.GroupRepository
 
 class ScheduleUseCase(
     private val groupRepository: GroupRepository
 ) {
-    fun getSchedule(groupCommand: GroupCommand): Flow<Either<Exception, Map<Int, List<Schedule>>>> = flow {
+    fun getSchedule(groupCommand: GroupCommand): Flow<Either<Exception, Map<Int, List<ScheduleInfo>>>> = flow {
         return@flow try {
             val remote = groupRepository.getSchedule(groupCommand)
-            val grouped = groupRepository.getSchedule(groupCommand).groupBy { it.dayOfWeek }
+            val grouped = groupRepository.getSchedule(groupCommand).map { it.scheduleInfo.associateBy { it.id } }
             groupRepository.saveSchedule(remote)
             emit(Either.Right(grouped))
         } catch (e: Exception) {
             emit(Either.Left(e))
         }
     }
-    fun getLocalSchedule(): Flow<Either<Exception, Map<Int, List<Schedule>>>> = flow {
+    fun getLocalSchedule(): Flow<Either<Exception, Map<Int, List<ScheduleInfo>>>> = flow {
         return@flow try {
-            val result = groupRepository.getLocalSchedule().groupBy { it.dayOfWeek }
+            val result = groupRepository.getLocalSchedule().map { it.scheduleInfo.associateBy { it.id } }
             emit(Either.Right(result))
         } catch (e: Exception) {
             emit(Either.Left(e))

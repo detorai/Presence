@@ -47,6 +47,7 @@ class LoginViewModel(
                         is Either.Right -> {
                             val groupId = response.value.user.responsible.first().group.id
                             getSchedule(groupId)
+                            
                             getPresence(groupId)
                         }
                         is Either.Left -> {

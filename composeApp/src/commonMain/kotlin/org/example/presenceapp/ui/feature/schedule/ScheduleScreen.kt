@@ -105,15 +105,16 @@ data class ScheduleScreen(
                 ScheduleDaySelector(
                     currentPage = currentPage,
                     daysOfWeek = daysOfWeek,
-                    onDaySelected = { screenModel.selectDay(it) },
+                    onDaySelected = { screenModel.setEvent(ScheduleContract.Event.SelectDay(it)) },
                     indicatorColor = AppTheme.colors.black
                 )
                 HorizontalPager(state = pagerState) { page ->
                     val day = page + 1
+                    val da = state.lessons[day]
                     ScheduleLessonList(
-                        lessons = state.lessonsList.filter { it.dayOfWeek == day },
+                        lessons = da,
                         onLessonClick = { lesson ->
-                            screenModel.selectLesson(lesson)
+                            screenModel.setEvent(ScheduleContract.Event.SelectLesson(lesson))
                         }
                     )
                 }
