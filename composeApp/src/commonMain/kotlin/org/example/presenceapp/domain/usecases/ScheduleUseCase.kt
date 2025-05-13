@@ -15,7 +15,13 @@ class ScheduleUseCase(
     fun getSchedule(groupCommand: GroupCommand): Flow<Either<Exception, Map<Int, List<ScheduleInfo>>>> = flow {
         return@flow try {
             val remote = groupRepository.getSchedule(groupCommand)
-            val grouped = groupRepository.getSchedule(groupCommand).map { it.scheduleInfo.associateBy { it.id } }
+            val grouped = groupRepository.getSchedule(groupCommand)
+                .groupBy(
+                    { it.dayOfWeek },
+                    { it.scheduleInfo }
+                ).mapValues { entry ->
+                    entry.value.flatten()
+                }
             groupRepository.saveSchedule(remote)
             emit(Either.Right(grouped))
         } catch (e: Exception) {
@@ -24,7 +30,13 @@ class ScheduleUseCase(
     }
     fun getLocalSchedule(): Flow<Either<Exception, Map<Int, List<ScheduleInfo>>>> = flow {
         return@flow try {
-            val result = groupRepository.getLocalSchedule().map { it.scheduleInfo.associateBy { it.id } }
+            val result = groupRepository.getLocalSchedule()
+                .groupBy(
+                    { it.dayOfWeek },
+                    { it.scheduleInfo }
+                ).mapValues { entry ->
+                    entry.value.flatten()
+                }
             emit(Either.Right(result))
         } catch (e: Exception) {
             emit(Either.Left(e))

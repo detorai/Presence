@@ -1,5 +1,6 @@
 package org.example.presenceapp.ui.feature.login.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
 import org.example.presenceapp.ui.base.SIDE_EFFECTS_KEY
+import org.example.presenceapp.ui.theme.AppTheme
 import org.example.project.ui.login.LoginContract
 import org.example.project.ui.login.LoginViewModel
 
@@ -31,11 +33,13 @@ fun Login(
         effectFlow.collect { effect ->
             when (effect) {
                 is LoginContract.Effect.Navigation.ToHome ->
-                {}
+                {
+
+                }
                 is LoginContract.Effect.ShowError -> {
                     snackbarState.showSnackbar(
                         message = effect.message!!,
-                        duration = SnackbarDuration.Short
+                        duration = SnackbarDuration.Indefinite
                     )
                 }
             }
@@ -55,7 +59,8 @@ fun Login(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(32.dp),
+                .background(AppTheme.colors.white)
+                .padding(start = 32.dp, end = 32.dp, top = 150.dp),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

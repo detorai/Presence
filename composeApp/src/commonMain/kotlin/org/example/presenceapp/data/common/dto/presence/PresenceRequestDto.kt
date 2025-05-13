@@ -6,5 +6,5 @@ data class PresenceRequestDto(
     val studentId: Int,
     val scheduleId: Int,
     val attendanceTypeId: Int,
-    val presenceDate: LocalDate,
+    val presenceDate: LocalDate
 )

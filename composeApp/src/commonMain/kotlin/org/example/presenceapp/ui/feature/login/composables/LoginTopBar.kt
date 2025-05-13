@@ -27,8 +27,7 @@ fun LoginTopBar(
                 Text(
                     "Добро пожаловать!",
                     style = AppTheme.typography.main,
-                    color = AppTheme.colors.black,
-                    modifier = Modifier.padding(top = 142.dp)
+                    color = AppTheme.colors.black
                 )
             }
         },

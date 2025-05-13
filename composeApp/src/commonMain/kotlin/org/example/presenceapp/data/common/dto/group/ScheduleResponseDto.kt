@@ -15,7 +15,6 @@ data class SubjectsResponseDto(
     val lessonNumber: Int,
     val audience: String,
     val subject: SubjectResponseDto,
-    val dayOfWeek: Int,
 )
 
 @Serializable

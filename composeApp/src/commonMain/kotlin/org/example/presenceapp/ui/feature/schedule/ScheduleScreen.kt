@@ -110,9 +110,8 @@ data class ScheduleScreen(
                 )
                 HorizontalPager(state = pagerState) { page ->
                     val day = page + 1
-                    val da = state.lessons[day]
                     ScheduleLessonList(
-                        lessons = da,
+                        lessons = state.lessons[day]!!,
                         onLessonClick = { lesson ->
                             screenModel.setEvent(ScheduleContract.Event.SelectLesson(lesson))
                         }

@@ -10,6 +10,9 @@ import org.example.presenceapp.data.common.dto.auth.RoleResponseDto
 import org.example.presenceapp.data.common.dto.auth.UserResponseDto
 import org.example.presenceapp.data.common.dto.group.GroupRequestDto
 import org.example.presenceapp.data.common.dto.group.PresenceResponseDto
+import org.example.presenceapp.data.common.dto.group.PresenceRowResponseDto
+import org.example.presenceapp.data.common.dto.group.PresenceRowScheduleResponseDto
+import org.example.presenceapp.data.common.dto.group.PresenceSubjectResponseDto
 import org.example.presenceapp.data.common.dto.group.ScheduleResponseDto
 import org.example.presenceapp.data.common.dto.group.StudentsResponseDto
 import org.example.presenceapp.data.common.dto.group.SubjectResponseDto
@@ -23,6 +26,9 @@ import org.example.presenceapp.domain.command.PresenceCommand
 import org.example.presenceapp.domain.entities.AttendanceTypeNet
 import org.example.presenceapp.domain.entities.LoginResponse
 import org.example.presenceapp.domain.entities.Presence
+import org.example.presenceapp.domain.entities.PresenceRow
+import org.example.presenceapp.domain.entities.PresenceRowSchedule
+import org.example.presenceapp.domain.entities.PresenceSubject
 import org.example.presenceapp.domain.entities.Presetting
 import org.example.presenceapp.domain.entities.Responsible
 import org.example.presenceapp.domain.entities.ResponsibleType
@@ -91,7 +97,16 @@ fun RoleResponseDto.toEntity(): RoleResponse = RoleResponse(
 fun GroupCommand.toDto(): GroupRequestDto = GroupRequestDto(groupId)
 
 fun PresenceResponseDto.toEntity(): Presence = Presence(
-    presenceId, scheduleId, attendanceTypeId, presenceDate, studentId
+    presenceDate, subjects.map { it.toEntity() }
+)
+fun PresenceSubjectResponseDto.toEntity(): PresenceSubject = PresenceSubject(
+    dayOfWeek, presenceRow.map { it.toEntity() }
+)
+fun PresenceRowResponseDto.toEntity(): PresenceRow = PresenceRow(
+    presenceId, schedule.toEntity(), attendanceTypeId, studentId
+)
+fun PresenceRowScheduleResponseDto.toEntity(): PresenceRowSchedule = PresenceRowSchedule(
+    id, lessonNumber, audience, subject.toEntity()
 )
 
 fun StudentsResponseDto.toEntity(): Students = Students(
