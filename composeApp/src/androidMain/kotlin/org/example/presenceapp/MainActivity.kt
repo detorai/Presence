@@ -5,9 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import org.example.presenceapp.di.androidModule
+import org.example.presenceapp.di.navigationModule
 import org.example.presenceapp.di.networkModule
 import org.koin.android.ext.koin.androidContext
+import org.koin.compose.getKoin
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.logger.Level
 import org.koin.core.logger.PrintLogger
@@ -19,7 +24,7 @@ class MainActivity : ComponentActivity() {
         startKoin {
             logger(PrintLogger(Level.DEBUG))
             androidContext(applicationContext)
-            modules(networkModule + androidModule)
+            modules(listOf(networkModule, navigationModule(navigator), androidModule))
         }
 
         setContent {

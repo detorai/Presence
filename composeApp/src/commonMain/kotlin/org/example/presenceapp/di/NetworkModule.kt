@@ -1,5 +1,6 @@
 package org.example.presenceapp.di
 
+import cafe.adriel.voyager.navigator.Navigator
 import de.jensklingenberg.ktorfit.Ktorfit
 import org.example.presenceapp.data.common.dto.presence.PresenceNetRepository
 import org.example.presenceapp.data.remote.api.AuthApi
@@ -18,6 +19,8 @@ import org.example.presenceapp.domain.usecases.LoginUseCase
 import org.example.presenceapp.domain.usecases.ScheduleUseCase
 import org.example.presenceapp.ui.feature.info.InfoScreenModel
 import org.example.presenceapp.ui.feature.schedule.ScheduleScreenModel
+import org.example.presenceapp.ui.navigation.AppNavigator
+import org.example.presenceapp.ui.navigation.GlobalNavigator
 import org.example.project.ui.login.LoginViewModel
 import org.koin.dsl.module
 
@@ -34,7 +37,7 @@ val networkModule = module {
     single<GroupRepository> { GroupNetRepository (get(), get()) }
 
     single { PresenceApiImpl(get()) }
-    single<PresenceRepository> { PresenceNetRepository(get()) }
+    single <PresenceRepository> { PresenceNetRepository(get()) }
 
     single { LoginUseCase(get()) }
     single { ScheduleUseCase(get()) }

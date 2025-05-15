@@ -1,4 +1,4 @@
-package org.example.project.ui.weeks
+package org.example.presenceapp.ui.feature.weeks.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,43 +12,55 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.model.rememberScreenModel
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import kotlinx.coroutines.flow.Flow
+import org.example.presenceapp.ui.base.SIDE_EFFECTS_KEY
 import org.example.presenceapp.ui.feature.commons.CommonBottomBar
 import org.example.presenceapp.ui.feature.schedule.ScheduleScreen
 import org.example.presenceapp.ui.theme.AppTheme
-import org.example.presenceapp.ui.feature.weeks.components.MonthHeader
-import org.example.presenceapp.ui.feature.weeks.components.ScheduleCard
 import org.example.project.domain.models.formatWeek
+import org.example.project.ui.login.LoginContract
+import org.example.project.ui.weeks.WeekContract
+import org.example.project.ui.weeks.WeeksViewModel
 
-class WeeksScreen: Screen {
-    @Composable
-    override fun Content() {
-        val navigator  = LocalNavigator.currentOrThrow
-        val viewModel = rememberScreenModel { WeeksViewModel() }
-        Scaffold(
-            bottomBar = {
-                CommonBottomBar()
-            },
-        ) {
-            Weeks(viewModel, navigator)
+@Composable
+fun Weeks(
+    viewModel: WeeksViewModel,
+    state: WeekContract.State,
+    effectFlow: Flow<WeekContract.Effect>,
+    snackbarState: SnackbarHostState,
+    onNavigationRequested: (WeekContract.Effect.Navigation) -> Unit
+){
+    LaunchedEffect(SIDE_EFFECTS_KEY){
+        effectFlow.collect { effect ->
+            when (effect) {
+                is WeekContract.Effect.ShowError -> {
+                    snackbarState.showSnackbar(
+                        message = effect.message!!,
+                        duration = SnackbarDuration.Indefinite
+                    )
+                }
+
+                else -> {}
+            }
         }
     }
-
-
-    @Composable
-    fun Weeks(viewModel: WeeksViewModel, navigator: Navigator){
-        val state = viewModel.state.collectAsState().value
-
+    Scaffold(
+        bottomBar = {
+            CommonBottomBar()
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarState)
+        }
+    ) {
         Column(
             modifier = Modifier.fillMaxSize().background(AppTheme.colors.white).padding(32.dp)
         ) {
@@ -57,7 +69,7 @@ class WeeksScreen: Screen {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
-            ){
+            ) {
                 Text(
                     "Расписание",
                     modifier = Modifier.padding(top = 10.dp),
@@ -74,9 +86,12 @@ class WeeksScreen: Screen {
                         Spacer(Modifier.height(10.dp))
                     }
                     items(weeks.sortedByDescending { it.startDate }) { week ->
-                        ScheduleCard(text = week.formatWeek(), onClick = {
-                            navigator.push(ScheduleScreen(week))
-                        })
+                        ScheduleCard(
+                            text = week.formatWeek(),
+                            onClick = {
+                            viewModel.setEvent(WeekContract.Event.WeekSelected(week))
+                            }
+                        )
                         Spacer(Modifier.height(10.dp))
                     }
                 }

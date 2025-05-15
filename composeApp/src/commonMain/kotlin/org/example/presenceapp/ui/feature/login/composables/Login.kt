@@ -26,7 +26,8 @@ fun Login(
     viewModel: LoginViewModel,
     state: LoginContract.State,
     effectFlow: Flow<LoginContract.Effect>,
-    snackbarState: SnackbarHostState
+    snackbarState: SnackbarHostState,
+    onNavigationRequested: (LoginContract.Effect.Navigation) -> Unit
 ) {
 
     LaunchedEffect(SIDE_EFFECTS_KEY) {
@@ -34,7 +35,7 @@ fun Login(
             when (effect) {
                 is LoginContract.Effect.Navigation.ToHome ->
                 {
-
+                    onNavigationRequested(LoginContract.Effect.Navigation.ToHome)
                 }
                 is LoginContract.Effect.ShowError -> {
                     snackbarState.showSnackbar(

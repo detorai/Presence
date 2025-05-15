@@ -1,5 +1,9 @@
 package org.example.presenceapp.di
 
+import androidx.compose.runtime.Composable
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import org.example.presenceapp.data.local.LocalDataSource
 import org.example.presenceapp.data.local.sql.cache.AndroidDatabaseDriverFactory
 import org.example.presenceapp.data.local.sql.cache.DatabaseDriverFactory
@@ -22,4 +26,6 @@ val androidModule = module {
     single { LocalDataSource(get()) }
 
     single<DatabaseDriverFactory> { AndroidDatabaseDriverFactory(androidContext()) }
+
+
 }

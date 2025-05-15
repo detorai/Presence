@@ -24,8 +24,8 @@ import com.presenceapp.composeapp.resources.schedule
 import com.presenceapp.composeapp.resources.settings
 import org.example.presenceapp.ui.feature.info.InfoScreen
 import org.example.presenceapp.ui.feature.settings.SettingsScreen
+import org.example.presenceapp.ui.navigation.Screens
 import org.example.presenceapp.ui.theme.AppTheme
-import org.example.project.ui.weeks.WeeksScreen
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -34,7 +34,7 @@ fun CommonBottomBar() {
     val currentScreen = navigator.lastItem
     val routes = listOf(
         Triple(Res.drawable.info, "Информация", InfoScreen()),
-        Triple(Res.drawable.schedule, "Расписание", WeeksScreen()),
+        Triple(Res.drawable.schedule, "Расписание", Screens.WeekScreen),
         Triple(Res.drawable.settings, "Настройки", SettingsScreen())
     )
 
