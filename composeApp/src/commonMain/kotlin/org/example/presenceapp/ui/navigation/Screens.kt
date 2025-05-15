@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
+import org.example.presenceapp.di.LocalAppNavigator
 import org.example.presenceapp.ui.feature.login.composables.Login
 import org.example.presenceapp.ui.feature.schedule.ScheduleScreen
 import org.example.presenceapp.ui.feature.weeks.components.Weeks
@@ -23,7 +24,7 @@ sealed class Screens(): Screen {
             val viewModel: LoginViewModel = koinScreenModel()
             val state = viewModel.viewState.collectAsState().value
             val snackbarHostState = remember { SnackbarHostState() }
-            val navigator = getKoin().get<GlobalNavigator>()
+            val navigator = LocalAppNavigator.current
             Login(
                 viewModel,
                 state,
@@ -40,7 +41,7 @@ sealed class Screens(): Screen {
     data object WeekScreen: Screens(){
         @Composable
         override fun Content() {
-            val navigator = getKoin().get<GlobalNavigator>()
+            val navigator = LocalAppNavigator.current
             val viewModel = rememberScreenModel { WeeksViewModel() }
             val state = viewModel.viewState.collectAsState().value
             val snackbarHostState = remember { SnackbarHostState() }

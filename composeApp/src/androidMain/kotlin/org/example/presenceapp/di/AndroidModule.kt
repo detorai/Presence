@@ -27,5 +27,4 @@ val androidModule = module {
 
     single<DatabaseDriverFactory> { AndroidDatabaseDriverFactory(androidContext()) }
 
-
 }

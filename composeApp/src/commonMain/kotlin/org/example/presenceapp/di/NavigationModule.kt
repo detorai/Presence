@@ -1,11 +1,8 @@
 package org.example.presenceapp.di
 
-import cafe.adriel.voyager.navigator.Navigator
+import androidx.compose.runtime.staticCompositionLocalOf
 import org.example.presenceapp.ui.navigation.AppNavigator
-import org.example.presenceapp.ui.navigation.GlobalNavigator
-import org.koin.core.module.Module
-import org.koin.dsl.module
 
-fun navigationModule(navigator: Navigator): Module = module {
-    single<AppNavigator> { GlobalNavigator(navigator) }
+val LocalAppNavigator = staticCompositionLocalOf<AppNavigator> {
+    error("AppNavigator not provided. Did you forget to setup navigation?")
 }

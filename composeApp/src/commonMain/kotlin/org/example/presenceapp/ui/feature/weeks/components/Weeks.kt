@@ -39,6 +39,9 @@ fun Weeks(
     snackbarState: SnackbarHostState,
     onNavigationRequested: (WeekContract.Effect.Navigation) -> Unit
 ){
+    LaunchedEffect(Unit) {
+        viewModel.setEvent(WeekContract.Event.LoadWeeks)
+    }
     LaunchedEffect(SIDE_EFFECTS_KEY){
         effectFlow.collect { effect ->
             when (effect) {
@@ -48,8 +51,9 @@ fun Weeks(
                         duration = SnackbarDuration.Indefinite
                     )
                 }
-
-                else -> {}
+                is WeekContract.Effect.Navigation -> {
+                    onNavigationRequested(effect)
+                }
             }
         }
     }
