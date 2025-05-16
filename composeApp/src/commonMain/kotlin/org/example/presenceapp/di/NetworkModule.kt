@@ -43,6 +43,8 @@ val networkModule = module {
     single { ScheduleUseCase(get()) }
 
     factory { InfoScreenModel(get()) }
-    factory { ScheduleScreenModel(get()) }
+    factory { parameters ->
+        ScheduleScreenModel(get(), parameters.get())
+    }
     factory { LoginViewModel(get(), get()) }
 }

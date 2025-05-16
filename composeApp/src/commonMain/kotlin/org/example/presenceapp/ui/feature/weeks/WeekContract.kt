@@ -9,7 +9,6 @@ import org.example.project.domain.models.Week
 class WeekContract {
 
     sealed class Event: ViewEvent {
-        data object LoadWeeks: Event()
         data class WeekSelected(val week: Week) : Event()
     }
 

@@ -18,13 +18,13 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
 import org.example.presenceapp.ui.base.SIDE_EFFECTS_KEY
 import org.example.presenceapp.ui.feature.commons.CommonBottomBar
-import org.example.presenceapp.ui.feature.schedule.ScheduleScreen
 import org.example.presenceapp.ui.theme.AppTheme
 import org.example.project.domain.models.formatWeek
 import org.example.project.ui.login.LoginContract
@@ -33,15 +33,12 @@ import org.example.project.ui.weeks.WeeksViewModel
 
 @Composable
 fun Weeks(
-    viewModel: WeeksViewModel,
     state: WeekContract.State,
     effectFlow: Flow<WeekContract.Effect>,
-    snackbarState: SnackbarHostState,
+    onEventSent: (event: WeekContract.Event) -> Unit,
     onNavigationRequested: (WeekContract.Effect.Navigation) -> Unit
 ){
-    LaunchedEffect(Unit) {
-        viewModel.setEvent(WeekContract.Event.LoadWeeks)
-    }
+    val snackbarState = remember { SnackbarHostState() }
     LaunchedEffect(SIDE_EFFECTS_KEY){
         effectFlow.collect { effect ->
             when (effect) {
@@ -93,7 +90,7 @@ fun Weeks(
                         ScheduleCard(
                             text = week.formatWeek(),
                             onClick = {
-                            viewModel.setEvent(WeekContract.Event.WeekSelected(week))
+                                onEventSent(WeekContract.Event.WeekSelected(week))
                             }
                         )
                         Spacer(Modifier.height(10.dp))

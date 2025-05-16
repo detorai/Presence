@@ -17,14 +17,14 @@ import org.example.project.domain.models.Week
 class WeeksViewModel:
     BaseViewModel<WeekContract.Event, WeekContract.State, WeekContract.Effect>() {
 
+    init {
+        loadWeeks()
+    }
+
     override fun setInitialState() = WeekContract.State()
 
     override fun handleEvents(event: WeekContract.Event) {
         when (event) {
-            WeekContract.Event.LoadWeeks -> {
-                loadWeeks()
-            }
-
             is WeekContract.Event.WeekSelected -> {
                 setEffect {
                     WeekContract.Effect.Navigation.ToSchedule(event.week)
